@@ -32,6 +32,9 @@ import { Route as AuthenticatedSettingsDisplayRouteImport } from './routes/_auth
 import { Route as AuthenticatedSettingsAppearanceRouteImport } from './routes/_authenticated/settings/appearance'
 import { Route as AuthenticatedSettingsAccountRouteImport } from './routes/_authenticated/settings/account'
 import { Route as AuthenticatedErrorsErrorRouteImport } from './routes/_authenticated/errors/$error'
+import { Route as AuthenticatedAdminIdentityUsersRouteImport } from './routes/_authenticated/admin/identity/users'
+import { Route as AuthenticatedAdminIdentityRolesRouteImport } from './routes/_authenticated/admin/identity/roles'
+import { Route as AuthenticatedAdminIdentityMatrixRouteImport } from './routes/_authenticated/admin/identity/matrix'
 import { Route as AuthenticatedAdminComplianceIncorporationIndexRouteImport } from './routes/_authenticated/admin/compliance/incorporation/index'
 import { Route as AuthenticatedAdminComplianceIncorporationSpiceRouteImport } from './routes/_authenticated/admin/compliance/incorporation/spice'
 import { Route as AuthenticatedAdminComplianceIncorporationRunRouteImport } from './routes/_authenticated/admin/compliance/incorporation/run'
@@ -168,6 +171,24 @@ const AuthenticatedErrorsErrorRoute =
     path: '/errors/$error',
     getParentRoute: () => AuthenticatedRouteRoute,
   } as any)
+const AuthenticatedAdminIdentityUsersRoute =
+  AuthenticatedAdminIdentityUsersRouteImport.update({
+    id: '/admin/identity/users',
+    path: '/admin/identity/users',
+    getParentRoute: () => AuthenticatedRouteRoute,
+  } as any)
+const AuthenticatedAdminIdentityRolesRoute =
+  AuthenticatedAdminIdentityRolesRouteImport.update({
+    id: '/admin/identity/roles',
+    path: '/admin/identity/roles',
+    getParentRoute: () => AuthenticatedRouteRoute,
+  } as any)
+const AuthenticatedAdminIdentityMatrixRoute =
+  AuthenticatedAdminIdentityMatrixRouteImport.update({
+    id: '/admin/identity/matrix',
+    path: '/admin/identity/matrix',
+    getParentRoute: () => AuthenticatedRouteRoute,
+  } as any)
 const AuthenticatedAdminComplianceIncorporationIndexRoute =
   AuthenticatedAdminComplianceIncorporationIndexRouteImport.update({
     id: '/admin/compliance/incorporation/',
@@ -270,6 +291,9 @@ export interface FileRoutesByFullPath {
   '/help-center/': typeof AuthenticatedHelpCenterIndexRoute
   '/settings/': typeof AuthenticatedSettingsIndexRoute
   '/users/': typeof AuthenticatedUsersIndexRoute
+  '/admin/identity/matrix': typeof AuthenticatedAdminIdentityMatrixRoute
+  '/admin/identity/roles': typeof AuthenticatedAdminIdentityRolesRoute
+  '/admin/identity/users': typeof AuthenticatedAdminIdentityUsersRoute
   '/admin/compliance/incorporation/bank': typeof AuthenticatedAdminComplianceIncorporationBankRoute
   '/admin/compliance/incorporation/coi': typeof AuthenticatedAdminComplianceIncorporationCoiRoute
   '/admin/compliance/incorporation/commencement': typeof AuthenticatedAdminComplianceIncorporationCommencementRoute
@@ -306,6 +330,9 @@ export interface FileRoutesByTo {
   '/help-center': typeof AuthenticatedHelpCenterIndexRoute
   '/settings': typeof AuthenticatedSettingsIndexRoute
   '/users': typeof AuthenticatedUsersIndexRoute
+  '/admin/identity/matrix': typeof AuthenticatedAdminIdentityMatrixRoute
+  '/admin/identity/roles': typeof AuthenticatedAdminIdentityRolesRoute
+  '/admin/identity/users': typeof AuthenticatedAdminIdentityUsersRoute
   '/admin/compliance/incorporation/bank': typeof AuthenticatedAdminComplianceIncorporationBankRoute
   '/admin/compliance/incorporation/coi': typeof AuthenticatedAdminComplianceIncorporationCoiRoute
   '/admin/compliance/incorporation/commencement': typeof AuthenticatedAdminComplianceIncorporationCommencementRoute
@@ -345,6 +372,9 @@ export interface FileRoutesById {
   '/_authenticated/help-center/': typeof AuthenticatedHelpCenterIndexRoute
   '/_authenticated/settings/': typeof AuthenticatedSettingsIndexRoute
   '/_authenticated/users/': typeof AuthenticatedUsersIndexRoute
+  '/_authenticated/admin/identity/matrix': typeof AuthenticatedAdminIdentityMatrixRoute
+  '/_authenticated/admin/identity/roles': typeof AuthenticatedAdminIdentityRolesRoute
+  '/_authenticated/admin/identity/users': typeof AuthenticatedAdminIdentityUsersRoute
   '/_authenticated/admin/compliance/incorporation/bank': typeof AuthenticatedAdminComplianceIncorporationBankRoute
   '/_authenticated/admin/compliance/incorporation/coi': typeof AuthenticatedAdminComplianceIncorporationCoiRoute
   '/_authenticated/admin/compliance/incorporation/commencement': typeof AuthenticatedAdminComplianceIncorporationCommencementRoute
@@ -384,6 +414,9 @@ export interface FileRouteTypes {
     | '/help-center/'
     | '/settings/'
     | '/users/'
+    | '/admin/identity/matrix'
+    | '/admin/identity/roles'
+    | '/admin/identity/users'
     | '/admin/compliance/incorporation/bank'
     | '/admin/compliance/incorporation/coi'
     | '/admin/compliance/incorporation/commencement'
@@ -420,6 +453,9 @@ export interface FileRouteTypes {
     | '/help-center'
     | '/settings'
     | '/users'
+    | '/admin/identity/matrix'
+    | '/admin/identity/roles'
+    | '/admin/identity/users'
     | '/admin/compliance/incorporation/bank'
     | '/admin/compliance/incorporation/coi'
     | '/admin/compliance/incorporation/commencement'
@@ -458,6 +494,9 @@ export interface FileRouteTypes {
     | '/_authenticated/help-center/'
     | '/_authenticated/settings/'
     | '/_authenticated/users/'
+    | '/_authenticated/admin/identity/matrix'
+    | '/_authenticated/admin/identity/roles'
+    | '/_authenticated/admin/identity/users'
     | '/_authenticated/admin/compliance/incorporation/bank'
     | '/_authenticated/admin/compliance/incorporation/coi'
     | '/_authenticated/admin/compliance/incorporation/commencement'
@@ -651,6 +690,27 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedErrorsErrorRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
+    '/_authenticated/admin/identity/users': {
+      id: '/_authenticated/admin/identity/users'
+      path: '/admin/identity/users'
+      fullPath: '/admin/identity/users'
+      preLoaderRoute: typeof AuthenticatedAdminIdentityUsersRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/admin/identity/roles': {
+      id: '/_authenticated/admin/identity/roles'
+      path: '/admin/identity/roles'
+      fullPath: '/admin/identity/roles'
+      preLoaderRoute: typeof AuthenticatedAdminIdentityRolesRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/admin/identity/matrix': {
+      id: '/_authenticated/admin/identity/matrix'
+      path: '/admin/identity/matrix'
+      fullPath: '/admin/identity/matrix'
+      preLoaderRoute: typeof AuthenticatedAdminIdentityMatrixRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
     '/_authenticated/admin/compliance/incorporation/': {
       id: '/_authenticated/admin/compliance/incorporation/'
       path: '/admin/compliance/incorporation'
@@ -775,6 +835,9 @@ interface AuthenticatedRouteRouteChildren {
   AuthenticatedErrorsErrorRoute: typeof AuthenticatedErrorsErrorRoute
   AuthenticatedHelpCenterIndexRoute: typeof AuthenticatedHelpCenterIndexRoute
   AuthenticatedUsersIndexRoute: typeof AuthenticatedUsersIndexRoute
+  AuthenticatedAdminIdentityMatrixRoute: typeof AuthenticatedAdminIdentityMatrixRoute
+  AuthenticatedAdminIdentityRolesRoute: typeof AuthenticatedAdminIdentityRolesRoute
+  AuthenticatedAdminIdentityUsersRoute: typeof AuthenticatedAdminIdentityUsersRoute
   AuthenticatedAdminComplianceIncorporationBankRoute: typeof AuthenticatedAdminComplianceIncorporationBankRoute
   AuthenticatedAdminComplianceIncorporationCoiRoute: typeof AuthenticatedAdminComplianceIncorporationCoiRoute
   AuthenticatedAdminComplianceIncorporationCommencementRoute: typeof AuthenticatedAdminComplianceIncorporationCommencementRoute
@@ -797,6 +860,9 @@ const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
   AuthenticatedErrorsErrorRoute: AuthenticatedErrorsErrorRoute,
   AuthenticatedHelpCenterIndexRoute: AuthenticatedHelpCenterIndexRoute,
   AuthenticatedUsersIndexRoute: AuthenticatedUsersIndexRoute,
+  AuthenticatedAdminIdentityMatrixRoute: AuthenticatedAdminIdentityMatrixRoute,
+  AuthenticatedAdminIdentityRolesRoute: AuthenticatedAdminIdentityRolesRoute,
+  AuthenticatedAdminIdentityUsersRoute: AuthenticatedAdminIdentityUsersRoute,
   AuthenticatedAdminComplianceIncorporationBankRoute:
     AuthenticatedAdminComplianceIncorporationBankRoute,
   AuthenticatedAdminComplianceIncorporationCoiRoute:

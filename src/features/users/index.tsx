@@ -1,4 +1,5 @@
-import { getRouteApi } from '@tanstack/react-router'
+import { useState, useEffect } from 'react'
+import { useSearch, useNavigate } from '@tanstack/react-router'
 import { ConfigDrawer } from '@/components/config-drawer'
 import { Header } from '@/components/layout/header'
 import { Main } from '@/components/layout/main'
@@ -9,13 +10,33 @@ import { UsersDialogs } from './components/users-dialogs'
 import { UsersPrimaryButtons } from './components/users-primary-buttons'
 import { UsersProvider } from './components/users-provider'
 import { UsersTable } from './components/users-table'
-import { users } from './data/users'
-
-const route = getRouteApi('/_authenticated/users/')
+import { accessControlService } from '@/services/access-control.service'
+import { toast } from 'sonner'
 
 export function Users() {
-  const search = route.useSearch()
-  const navigate = route.useNavigate()
+  const search: any = useSearch({ strict: false })
+  const navigate = useNavigate()
+  const [data, setData] = useState<any[]>([])
+  const [roles, setRoles] = useState<any[]>([])
+  const [loading, setLoading] = useState(true)
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const [usersData, rolesData] = await Promise.all([
+          accessControlService.getUsers(),
+          accessControlService.getRoles(),
+        ])
+        setData(usersData)
+        setRoles(rolesData.map((r: any) => ({ label: r.role_name, value: r.role_id })))
+      } catch (error) {
+        toast.error('Failed to fetch data')
+      } finally {
+        setLoading(false)
+      }
+    }
+    fetchData()
+  }, [])
 
   return (
     <UsersProvider>
@@ -36,7 +57,13 @@ export function Users() {
           </div>
           <UsersPrimaryButtons />
         </div>
-        <UsersTable data={users} search={search} navigate={navigate} />
+        {loading ? (
+          <div className='flex flex-1 items-center justify-center'>
+            <p>Loading users...</p>
+          </div>
+        ) : (
+          <UsersTable data={data} roles={roles} search={search} navigate={navigate} />
+        )}
       </Main>
 
       <UsersDialogs />

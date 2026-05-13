@@ -3,7 +3,7 @@
 import { z } from 'zod'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
-import { showSubmittedData } from '@/lib/show-submitted-data'
+import { useEffect, useState } from 'react'
 import { Button } from '@/components/ui/button'
 import {
   Dialog,
@@ -24,8 +24,8 @@ import {
 import { Input } from '@/components/ui/input'
 import { PasswordInput } from '@/components/password-input'
 import { SelectDropdown } from '@/components/select-dropdown'
-import { roles } from '../data/data'
-import { type User } from '../data/schema'
+import { accessControlService } from '@/services/access-control.service'
+import { toast } from 'sonner'
 
 const formSchema = z
   .object({
@@ -94,7 +94,7 @@ const formSchema = z
 type UserForm = z.infer<typeof formSchema>
 
 type UserActionDialogProps = {
-  currentRow?: User
+  currentRow?: any
   open: boolean
   onOpenChange: (open: boolean) => void
 }
@@ -105,11 +105,30 @@ export function UsersActionDialog({
   onOpenChange,
 }: UserActionDialogProps) {
   const isEdit = !!currentRow
+  const [apiRoles, setApiRoles] = useState<any[]>([])
+
+  useEffect(() => {
+    const fetchRoles = async () => {
+      try {
+        const rolesData = await accessControlService.getRoles()
+        setApiRoles(rolesData)
+      } catch (error) {
+        toast.error('Failed to fetch roles')
+      }
+    }
+    if (open) fetchRoles()
+  }, [open])
+
   const form = useForm<UserForm>({
     resolver: zodResolver(formSchema),
     defaultValues: isEdit
       ? {
-          ...currentRow,
+          firstName: currentRow.name?.split(' ')[0] || '',
+          lastName: currentRow.name?.split(' ')[1] || '',
+          username: currentRow.mail_id?.split('@')[0] || '',
+          email: currentRow.mail_id || '',
+          role: currentRow.role_id || '',
+          phoneNumber: currentRow.mobile_no || '',
           password: '',
           confirmPassword: '',
           isEdit,
@@ -127,10 +146,45 @@ export function UsersActionDialog({
         },
   })
 
-  const onSubmit = (values: UserForm) => {
-    form.reset()
-    showSubmittedData(values)
-    onOpenChange(false)
+  useEffect(() => {
+    if (currentRow) {
+       form.reset({
+          firstName: currentRow.name?.split(' ')[0] || '',
+          lastName: currentRow.name?.split(' ')[1] || '',
+          username: currentRow.mail_id?.split('@')[0] || '',
+          email: currentRow.mail_id || '',
+          role: currentRow.role_id || '',
+          phoneNumber: currentRow.mobile_no || '',
+          password: '',
+          confirmPassword: '',
+          isEdit,
+       })
+    }
+  }, [currentRow, form, isEdit])
+
+  const onSubmit = async (values: UserForm) => {
+    try {
+      const payload = {
+        name: `${values.firstName} ${values.lastName}`,
+        mail_id: values.email,
+        role_id: values.role,
+        mobile_no: values.phoneNumber,
+        password: values.password,
+      }
+
+      if (isEdit && currentRow) {
+        await accessControlService.updateUser(currentRow.user_id, payload)
+        toast.success('User updated successfully')
+      } else {
+        await accessControlService.createUser(payload)
+        toast.success('User created successfully')
+      }
+      onOpenChange(false)
+      form.reset()
+      window.location.reload() 
+    } catch (error) {
+      toast.error('Failed to save user')
+    }
   }
 
   const isPasswordTouched = !!form.formState.dirtyFields.password
@@ -264,9 +318,9 @@ export function UsersActionDialog({
                       onValueChange={field.onChange}
                       placeholder='Select a role'
                       className='col-span-4'
-                      items={roles.map(({ label, value }) => ({
-                        label,
-                        value,
+                      items={apiRoles.map((role) => ({
+                        label: role.role_name,
+                        value: role.role_id,
                       }))}
                     />
                     <FormMessage className='col-span-4 col-start-3' />

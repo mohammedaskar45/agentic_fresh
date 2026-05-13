@@ -1,8 +1,10 @@
+'use client'
+
 import { z } from 'zod'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { MailPlus, Send } from 'lucide-react'
-import { showSubmittedData } from '@/lib/show-submitted-data'
+import { useEffect, useState } from 'react'
 import { Button } from '@/components/ui/button'
 import {
   Dialog,
@@ -24,7 +26,8 @@ import {
 import { Input } from '@/components/ui/input'
 import { Textarea } from '@/components/ui/textarea'
 import { SelectDropdown } from '@/components/select-dropdown'
-import { roles } from '../data/data'
+import { accessControlService } from '@/services/access-control.service'
+import { toast } from 'sonner'
 
 const formSchema = z.object({
   email: z.email({
@@ -46,6 +49,20 @@ export function UsersInviteDialog({
   open,
   onOpenChange,
 }: UserInviteDialogProps) {
+  const [apiRoles, setApiRoles] = useState<any[]>([])
+
+  useEffect(() => {
+    const fetchRoles = async () => {
+      try {
+        const rolesData = await accessControlService.getRoles()
+        setApiRoles(rolesData)
+      } catch (error) {
+        toast.error('Failed to fetch roles')
+      }
+    }
+    if (open) fetchRoles()
+  }, [open])
+
   const form = useForm<UserInviteForm>({
     resolver: zodResolver(formSchema),
     defaultValues: { email: '', role: '', desc: '' },
@@ -53,7 +70,8 @@ export function UsersInviteDialog({
 
   const onSubmit = (values: UserInviteForm) => {
     form.reset()
-    showSubmittedData(values)
+    // For now just show toast, real invite logic can be added later
+    toast.success(`Invite sent to ${values.email}`)
     onOpenChange(false)
   }
 
@@ -108,9 +126,9 @@ export function UsersInviteDialog({
                     defaultValue={field.value}
                     onValueChange={field.onChange}
                     placeholder='Select a role'
-                    items={roles.map(({ label, value }) => ({
-                      label,
-                      value,
+                    items={apiRoles.map((role) => ({
+                      label: role.role_name,
+                      value: role.role_id,
                     }))}
                   />
                   <FormMessage />
