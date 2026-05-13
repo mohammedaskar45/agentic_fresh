@@ -20,12 +20,14 @@ import { Separator } from '@/components/ui/separator'
 import { toast } from 'sonner'
 import { useWorkflowStore } from '@/stores/workflow-store'
 import { incorporationService } from '@/services/incorporation.service'
+import { UploadGate } from '../../components/upload-gate'
 
 export default function DSCStep() {
   const navigate = useNavigate()
   const workflow = useWorkflowStore()
   const [isAiProcessing, setIsAiProcessing] = useState(false)
   const [isSaving, setIsSaving] = useState(false)
+  const [isVerified, setIsVerified] = useState(false)
   
   const [formData, setFormData] = useState({
     full_name: '',
@@ -202,14 +204,22 @@ export default function DSCStep() {
             </CardContent>
           </Card>
 
-          <div className='flex justify-end gap-3'>
+          <div className='mt-8 pt-8 border-t'>
+            <UploadGate 
+              stepId={1} 
+              docTitle='DSC Application & Proofs' 
+              onVerified={() => setIsVerified(true)} 
+            />
+          </div>
+
+          <div className='flex justify-end gap-3 pt-6'>
             <Button variant='outline'>Save as Draft</Button>
             <Button 
-              className='px-8'
+              className='px-8 bg-primary text-white shadow-lg shadow-primary/20'
               onClick={handleComplete}
-              disabled={isSaving}
+              disabled={isSaving || !isVerified}
             >
-              {isSaving ? 'Saving...' : 'Validate & Continue'}
+              {isSaving ? 'Saving...' : 'Final Submission (Step 1)'}
             </Button>
           </div>
         </div>

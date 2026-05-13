@@ -17,9 +17,9 @@ interface WorkflowState {
 export const useWorkflowStore = create<WorkflowState>()(
   persist(
     (set) => ({
-      currentStepId: 1,
-      steps: Array.from({ length: 11 }, (_, i) => ({
-        id: i + 1,
+      currentStepId: 0,
+      steps: Array.from({ length: 12 }, (_, i) => ({
+        id: i,
         status: i === 0 ? 'current' : 'upcoming',
       })),
       completeStep: (stepId) =>
@@ -40,15 +40,15 @@ export const useWorkflowStore = create<WorkflowState>()(
         })),
       reset: () =>
         set(() => ({
-          currentStepId: 1,
-          steps: Array.from({ length: 11 }, (_, i) => ({
-            id: i + 1,
+          currentStepId: 0,
+          steps: Array.from({ length: 12 }, (_, i) => ({
+            id: i,
             status: i === 0 ? 'current' : 'upcoming',
           })),
         })),
     }),
     {
-      name: 'incorporation-workflow-v2',
+      name: 'incorporation-workflow-v3',
       storage: createJSONStorage(() => localStorage),
     }
   )

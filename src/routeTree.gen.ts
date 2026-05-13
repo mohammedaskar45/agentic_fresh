@@ -37,6 +37,7 @@ import { Route as AuthenticatedAdminComplianceIncorporationSpiceRouteImport } fr
 import { Route as AuthenticatedAdminComplianceIncorporationRunRouteImport } from './routes/_authenticated/admin/compliance/incorporation/run'
 import { Route as AuthenticatedAdminComplianceIncorporationPanTanRouteImport } from './routes/_authenticated/admin/compliance/incorporation/pan-tan'
 import { Route as AuthenticatedAdminComplianceIncorporationMoaAoaRouteImport } from './routes/_authenticated/admin/compliance/incorporation/moa-aoa'
+import { Route as AuthenticatedAdminComplianceIncorporationMasterDataRouteImport } from './routes/_authenticated/admin/compliance/incorporation/master-data'
 import { Route as AuthenticatedAdminComplianceIncorporationLaborRouteImport } from './routes/_authenticated/admin/compliance/incorporation/labor'
 import { Route as AuthenticatedAdminComplianceIncorporationGstRouteImport } from './routes/_authenticated/admin/compliance/incorporation/gst'
 import { Route as AuthenticatedAdminComplianceIncorporationDscRouteImport } from './routes/_authenticated/admin/compliance/incorporation/dsc'
@@ -197,6 +198,12 @@ const AuthenticatedAdminComplianceIncorporationMoaAoaRoute =
     path: '/admin/compliance/incorporation/moa-aoa',
     getParentRoute: () => AuthenticatedRouteRoute,
   } as any)
+const AuthenticatedAdminComplianceIncorporationMasterDataRoute =
+  AuthenticatedAdminComplianceIncorporationMasterDataRouteImport.update({
+    id: '/admin/compliance/incorporation/master-data',
+    path: '/admin/compliance/incorporation/master-data',
+    getParentRoute: () => AuthenticatedRouteRoute,
+  } as any)
 const AuthenticatedAdminComplianceIncorporationLaborRoute =
   AuthenticatedAdminComplianceIncorporationLaborRouteImport.update({
     id: '/admin/compliance/incorporation/labor',
@@ -270,6 +277,7 @@ export interface FileRoutesByFullPath {
   '/admin/compliance/incorporation/dsc': typeof AuthenticatedAdminComplianceIncorporationDscRoute
   '/admin/compliance/incorporation/gst': typeof AuthenticatedAdminComplianceIncorporationGstRoute
   '/admin/compliance/incorporation/labor': typeof AuthenticatedAdminComplianceIncorporationLaborRoute
+  '/admin/compliance/incorporation/master-data': typeof AuthenticatedAdminComplianceIncorporationMasterDataRoute
   '/admin/compliance/incorporation/moa-aoa': typeof AuthenticatedAdminComplianceIncorporationMoaAoaRoute
   '/admin/compliance/incorporation/pan-tan': typeof AuthenticatedAdminComplianceIncorporationPanTanRoute
   '/admin/compliance/incorporation/run': typeof AuthenticatedAdminComplianceIncorporationRunRoute
@@ -305,6 +313,7 @@ export interface FileRoutesByTo {
   '/admin/compliance/incorporation/dsc': typeof AuthenticatedAdminComplianceIncorporationDscRoute
   '/admin/compliance/incorporation/gst': typeof AuthenticatedAdminComplianceIncorporationGstRoute
   '/admin/compliance/incorporation/labor': typeof AuthenticatedAdminComplianceIncorporationLaborRoute
+  '/admin/compliance/incorporation/master-data': typeof AuthenticatedAdminComplianceIncorporationMasterDataRoute
   '/admin/compliance/incorporation/moa-aoa': typeof AuthenticatedAdminComplianceIncorporationMoaAoaRoute
   '/admin/compliance/incorporation/pan-tan': typeof AuthenticatedAdminComplianceIncorporationPanTanRoute
   '/admin/compliance/incorporation/run': typeof AuthenticatedAdminComplianceIncorporationRunRoute
@@ -343,6 +352,7 @@ export interface FileRoutesById {
   '/_authenticated/admin/compliance/incorporation/dsc': typeof AuthenticatedAdminComplianceIncorporationDscRoute
   '/_authenticated/admin/compliance/incorporation/gst': typeof AuthenticatedAdminComplianceIncorporationGstRoute
   '/_authenticated/admin/compliance/incorporation/labor': typeof AuthenticatedAdminComplianceIncorporationLaborRoute
+  '/_authenticated/admin/compliance/incorporation/master-data': typeof AuthenticatedAdminComplianceIncorporationMasterDataRoute
   '/_authenticated/admin/compliance/incorporation/moa-aoa': typeof AuthenticatedAdminComplianceIncorporationMoaAoaRoute
   '/_authenticated/admin/compliance/incorporation/pan-tan': typeof AuthenticatedAdminComplianceIncorporationPanTanRoute
   '/_authenticated/admin/compliance/incorporation/run': typeof AuthenticatedAdminComplianceIncorporationRunRoute
@@ -381,6 +391,7 @@ export interface FileRouteTypes {
     | '/admin/compliance/incorporation/dsc'
     | '/admin/compliance/incorporation/gst'
     | '/admin/compliance/incorporation/labor'
+    | '/admin/compliance/incorporation/master-data'
     | '/admin/compliance/incorporation/moa-aoa'
     | '/admin/compliance/incorporation/pan-tan'
     | '/admin/compliance/incorporation/run'
@@ -416,6 +427,7 @@ export interface FileRouteTypes {
     | '/admin/compliance/incorporation/dsc'
     | '/admin/compliance/incorporation/gst'
     | '/admin/compliance/incorporation/labor'
+    | '/admin/compliance/incorporation/master-data'
     | '/admin/compliance/incorporation/moa-aoa'
     | '/admin/compliance/incorporation/pan-tan'
     | '/admin/compliance/incorporation/run'
@@ -453,6 +465,7 @@ export interface FileRouteTypes {
     | '/_authenticated/admin/compliance/incorporation/dsc'
     | '/_authenticated/admin/compliance/incorporation/gst'
     | '/_authenticated/admin/compliance/incorporation/labor'
+    | '/_authenticated/admin/compliance/incorporation/master-data'
     | '/_authenticated/admin/compliance/incorporation/moa-aoa'
     | '/_authenticated/admin/compliance/incorporation/pan-tan'
     | '/_authenticated/admin/compliance/incorporation/run'
@@ -673,6 +686,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedAdminComplianceIncorporationMoaAoaRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
+    '/_authenticated/admin/compliance/incorporation/master-data': {
+      id: '/_authenticated/admin/compliance/incorporation/master-data'
+      path: '/admin/compliance/incorporation/master-data'
+      fullPath: '/admin/compliance/incorporation/master-data'
+      preLoaderRoute: typeof AuthenticatedAdminComplianceIncorporationMasterDataRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
     '/_authenticated/admin/compliance/incorporation/labor': {
       id: '/_authenticated/admin/compliance/incorporation/labor'
       path: '/admin/compliance/incorporation/labor'
@@ -762,6 +782,7 @@ interface AuthenticatedRouteRouteChildren {
   AuthenticatedAdminComplianceIncorporationDscRoute: typeof AuthenticatedAdminComplianceIncorporationDscRoute
   AuthenticatedAdminComplianceIncorporationGstRoute: typeof AuthenticatedAdminComplianceIncorporationGstRoute
   AuthenticatedAdminComplianceIncorporationLaborRoute: typeof AuthenticatedAdminComplianceIncorporationLaborRoute
+  AuthenticatedAdminComplianceIncorporationMasterDataRoute: typeof AuthenticatedAdminComplianceIncorporationMasterDataRoute
   AuthenticatedAdminComplianceIncorporationMoaAoaRoute: typeof AuthenticatedAdminComplianceIncorporationMoaAoaRoute
   AuthenticatedAdminComplianceIncorporationPanTanRoute: typeof AuthenticatedAdminComplianceIncorporationPanTanRoute
   AuthenticatedAdminComplianceIncorporationRunRoute: typeof AuthenticatedAdminComplianceIncorporationRunRoute
@@ -790,6 +811,8 @@ const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
     AuthenticatedAdminComplianceIncorporationGstRoute,
   AuthenticatedAdminComplianceIncorporationLaborRoute:
     AuthenticatedAdminComplianceIncorporationLaborRoute,
+  AuthenticatedAdminComplianceIncorporationMasterDataRoute:
+    AuthenticatedAdminComplianceIncorporationMasterDataRoute,
   AuthenticatedAdminComplianceIncorporationMoaAoaRoute:
     AuthenticatedAdminComplianceIncorporationMoaAoaRoute,
   AuthenticatedAdminComplianceIncorporationPanTanRoute:

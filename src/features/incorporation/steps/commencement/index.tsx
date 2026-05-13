@@ -1,163 +1,194 @@
 import { useState, useEffect } from 'react'
 import { useNavigate } from '@tanstack/react-router'
 import { 
-  Rocket, 
-  Flag, 
+  ShieldCheck, 
   ArrowLeft, 
   ChevronLeft, 
-  Save, 
-  CheckCircle2,
-  Bot,
-  PartyPopper,
-  ShieldCheck,
-  FileBadge
+  Rocket, 
+  CheckCircle2, 
+  AlertCircle,
+  Banknote,
+  FileText,
+  Upload,
+  Download,
+  Loader2
 } from 'lucide-react'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
-import { Input } from '@/components/ui/input'
-import { Label } from '@/components/ui/label'
 import { toast } from 'sonner'
 import { useWorkflowStore } from '@/stores/workflow-store'
 import { incorporationService } from '@/services/incorporation.service'
 import { Badge } from '@/components/ui/badge'
-import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert'
+import { UploadGate } from '../../components/upload-gate'
+import { pdfService } from '@/lib/pdf-service'
 
 export default function CommencementStep() {
   const navigate = useNavigate()
   const workflow = useWorkflowStore()
   const [isProcessing, setIsProcessing] = useState(false)
-  
-  const [formData, setFormData] = useState({
-    inc_20a_srn: '',
-    declaration_date: '',
-    status: 'pending' // pending, completed
-  })
+  const [isVerified, setIsVerified] = useState(false)
+  const [isBankStatementVerified, setIsBankStatementVerified] = useState(false)
+  const [masterData, setMasterData] = useState<any>(null)
+  const [bankData, setBankData] = useState<any>(null)
 
   useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const response = await incorporationService.getCommencement()
-        if (response && response.commencement_data) {
-          setFormData(response.commencement_data)
-        }
-      } catch (error) {
-        console.error('Failed to fetch Commencement data:', error)
-      }
-    }
     fetchData()
   }, [])
 
-  const handleSimulateCommencement = () => {
-    setFormData({
-      inc_20a_srn: 'COM-' + Math.random().toString(36).substring(7).toUpperCase(),
-      declaration_date: new Date().toISOString().split('T')[0],
-      status: 'completed'
-    })
-    toast.success('Commencement of Business (INC-20A) successfully filed!')
+  const fetchData = async () => {
+    try {
+      const md = await incorporationService.getMasterData()
+      setMasterData(md)
+      const bd = await incorporationService.getBank()
+      setBankData(bd?.bank_data)
+    } catch (error) {
+      console.error('Failed to fetch data:', error)
+    }
+  }
+
+  const handleDownloadDraft = () => {
+    if (!masterData || !masterData.company) {
+      return (
+        <div className='p-20 text-center space-y-4'>
+          <Rocket className='h-12 w-12 text-indigo-400 mx-auto' />
+          <h2 className='text-xl font-bold'>Step 0 Data Missing</h2>
+          <p className='text-sm text-muted-foreground'>Macha, Step 0 details illama Commencement filing panna mudiyaathu.</p>
+          <Button onClick={() => navigate({ to: '/admin/compliance/incorporation/master-data' })}>Go to Step 0</Button>
+        </div>
+      )
+    }
+    const content = `DECLARATION FOR COMMENCEMENT OF BUSINESS\n(Form INC-20A)\n\nI, ${masterData.stakeholders[0]?.full_name}, Director of ${masterData.company.proposed_name}, hereby declare that every subscriber to the memorandum has paid the value of the shares agreed to be taken by him...\n\nThe bank statement showing such payment is attached herewith.\n\nSignature: ________________`
+    pdfService.generateStatutoryPDF('INC-20A Declaration', content, masterData.company.proposed_name)
   }
 
   const handleComplete = async () => {
-    if (!formData.inc_20a_srn) {
-      toast.error('Please file the commencement declaration (INC-20A).')
-      return
-    }
-
     setIsProcessing(true)
     try {
-      await incorporationService.saveCommencement(formData)
+      await incorporationService.saveCommencement({ status: 'filed' })
       workflow.completeStep(11)
-      toast.success('Full Incorporation Lifecycle Completed! Congratulations!')
+      toast.success('Congratulations! Your company is now fully compliant and ready for business.')
       navigate({ to: '/admin/compliance/incorporation' })
     } catch (error) {
-      toast.error('Submission failed. Please try again.')
+      toast.error('Failed to finalize incorporation.')
     } finally {
       setIsProcessing(false)
     }
   }
 
+  if (!masterData || !masterData.company) {
+    return (
+      <div className='p-20 text-center space-y-4'>
+        <Rocket className='h-12 w-12 text-indigo-400 mx-auto' />
+        <h2 className='text-xl font-bold'>Master Data Missing</h2>
+        <p className='text-sm text-muted-foreground'>Company details are required to proceed with the Commencement of Business filing.</p>
+        <Button onClick={() => navigate({ to: '/admin/compliance/incorporation/master-data' })}>Complete Step 0</Button>
+      </div>
+    )
+  }
+
   return (
-    <div className='p-6 space-y-8 animate-in fade-in zoom-in-95 duration-700'>
+    <div className='p-6 space-y-8 animate-in fade-in duration-500'>
       <div className='flex items-center justify-between'>
         <div className='flex items-center gap-3'>
           <Button variant='ghost' size='icon' onClick={() => navigate({ to: '/admin/compliance/incorporation' })}>
             <ArrowLeft className='h-5 w-5' />
           </Button>
-          <div className='p-3 bg-red-500/10 rounded-2xl'>
-            <Rocket className='h-8 w-8 text-red-600' />
+          <div className='p-3 bg-indigo-600/10 rounded-2xl'>
+            <Rocket className='h-8 w-8 text-indigo-600' />
           </div>
           <div>
-            <h1 className='text-2xl font-bold'>Step 11: Commencement of Business</h1>
-            <p className='text-sm text-muted-foreground'>Final statutory filing (INC-20A) to begin business operations.</p>
+            <h1 className='text-2xl font-bold'>Step 11: Commencement of Business (INC-20A)</h1>
+            <p className='text-sm text-muted-foreground'>Final statutory filing to officially start business operations.</p>
           </div>
         </div>
       </div>
 
       <div className='grid grid-cols-1 lg:grid-cols-12 gap-8'>
         <div className='lg:col-span-8 space-y-6'>
-          {formData.status === 'completed' && (
-            <Alert className='border-green-500/20 bg-green-500/5'>
-                <PartyPopper className='h-4 w-4 text-green-600' />
-                <AlertTitle className='text-green-700'>Mission Accomplished!</AlertTitle>
-                <AlertDescription className='text-green-600/80 text-xs'>
-                    Your company is now fully compliant and legally authorized to commence all business operations.
-                </AlertDescription>
-            </Alert>
-          )}
-
-          <Card className='border-none shadow-xl overflow-hidden'>
+          <Card className='border-indigo-100 bg-indigo-50/30'>
             <CardHeader>
-              <CardTitle className='text-lg flex items-center gap-2'>
-                <Flag className='h-5 w-5 text-red-600' />
-                INC-20A Filing Status
+              <CardTitle className='text-sm flex items-center gap-2'>
+                <Banknote className='h-4 w-4 text-indigo-600' />
+                Subscription Money Proof
               </CardTitle>
+              <CardDescription>
+                {bankData ? `Verify payment receipt in ${bankData.bank_name} (A/c: ...${bankData.account_number?.slice(-4)})` : 'Upload the bank statement showing receipt of subscription money.'}
+              </CardDescription>
             </CardHeader>
-            <CardContent className='space-y-6'>
-               <div className='grid grid-cols-1 md:grid-cols-2 gap-6'>
-                  <div className='space-y-2'>
-                    <Label>Filing SRN</Label>
-                    <Input value={formData.inc_20a_srn} readOnly className='bg-muted/30 font-mono uppercase' placeholder='Waiting for filing...' />
-                  </div>
-                  <div className='space-y-2'>
-                    <Label>Date of Declaration</Label>
-                    <Input value={formData.declaration_date} readOnly className='bg-muted/30' />
-                  </div>
-               </div>
+            <CardContent>
+                <UploadGate 
+                    stepId={11} 
+                    docTitle='Bank Statement (Subscription Proof)' 
+                    onVerified={() => setIsBankStatementVerified(true)} 
+                />
             </CardContent>
           </Card>
 
-          <div className='flex justify-between gap-3'>
-            <Button variant='outline' className='gap-2' onClick={() => navigate({ to: '/admin/compliance/incorporation/labor' })}>
-              <ChevronLeft className='h-4 w-4' /> Back to Step 10
+          <Card>
+            <CardHeader>
+                <CardTitle className='text-sm flex items-center gap-2'>
+                    <FileText className='h-4 w-4 text-indigo-600' />
+                    Form INC-20A Declaration
+                </CardTitle>
+            </CardHeader>
+            <CardContent className='space-y-6'>
+                <div className='flex items-center justify-between p-4 bg-slate-50 border rounded-xl'>
+                    <div className='flex items-center gap-3'>
+                        <div className='p-2 bg-white rounded-lg shadow-sm'>
+                            <FileText className='h-5 w-5 text-indigo-600' />
+                        </div>
+                        <div>
+                            <p className='text-sm font-medium'>INC-20A Statutory Draft</p>
+                            <p className='text-[10px] text-slate-400'>Pre-filled based on Master Data</p>
+                        </div>
+                    </div>
+                    <Button variant='outline' size='sm' className='gap-2' onClick={handleDownloadDraft}>
+                        <Download className='h-3 w-3' /> Download Draft
+                    </Button>
+                </div>
+
+                <UploadGate 
+                    stepId={12} // Virtual ID for declaration
+                    docTitle='Signed INC-20A Declaration' 
+                    onVerified={() => setIsVerified(true)} 
+                />
+            </CardContent>
+          </Card>
+
+          <div className='flex justify-between gap-3 pt-6'>
+            <Button variant='outline' className='gap-2' onClick={() => navigate({ to: '/admin/compliance/incorporation' })}>
+              <ChevronLeft className='h-4 w-4' /> Back
             </Button>
-            <div className='flex gap-3'>
-              <Button className='px-8 bg-red-600 hover:bg-red-700 text-white shadow-lg shadow-red-500/20' onClick={handleSimulateCommencement}>
-                <Bot className='mr-2 h-4 w-4' /> AI Final Filing
-              </Button>
-              <Button className='px-8' onClick={handleComplete} disabled={isProcessing || formData.status !== 'completed'}>
-                {isProcessing ? 'Saving...' : 'Finish Journey'}
-              </Button>
-            </div>
+            <Button 
+                className='px-12 bg-indigo-600 hover:bg-indigo-700 text-white shadow-xl shadow-indigo-600/20'
+                disabled={!isVerified || !isBankStatementVerified || isProcessing}
+                onClick={handleComplete}
+            >
+              {isProcessing ? <Loader2 className='h-4 w-4 animate-spin' /> : 'Complete Final Filing (INC-20A)'}
+            </Button>
           </div>
         </div>
 
-        <div className='lg:col-span-4'>
-           <Card className='bg-red-500/5 border-red-500/10 shadow-none h-full'>
-              <CardHeader className='pb-2'>
-                <CardTitle className='text-sm flex items-center gap-2 text-red-700'>
-                  <ShieldCheck className='h-4 w-4' />
-                  Final Verdict
-                </CardTitle>
-              </CardHeader>
-              <CardContent className='space-y-4'>
-                 <p className='text-[11px] leading-relaxed'>
-                   Section 10A of the Companies Act requires every company to file a declaration of commencement within 180 days.
-                 </p>
-                 <div className='p-3 bg-white rounded-lg border border-red-100 flex items-center gap-3'>
-                    <FileBadge className='h-6 w-6 text-red-600' />
-                    <span className='text-[10px] font-bold'>INC-20A Statutory Compliance Ready</span>
-                 </div>
-              </CardContent>
-           </Card>
+        <div className='lg:col-span-4 space-y-6'>
+          <Card className='border-indigo-600/10 bg-indigo-600/5 shadow-none'>
+            <CardHeader className='pb-2'>
+              <CardTitle className='text-sm flex items-center gap-2 text-indigo-800'>
+                <ShieldCheck className='h-4 w-4' />
+                Compliance Mastery
+              </CardTitle>
+            </CardHeader>
+            <CardContent className='space-y-4 text-xs text-indigo-900/80 leading-relaxed'>
+              <p>
+                Section 10A of the Companies Act requires this filing within 180 days. 
+                <br /><br />
+                <b>Warning:</b> Business operations cannot legally start and you cannot borrow money until this form is approved.
+              </p>
+              <div className='pt-2 flex items-center gap-2 font-bold text-indigo-700'>
+                <CheckCircle2 className='h-3.5 w-3.5' />
+                <span>Everything is ready for liftoff!</span>
+              </div>
+            </CardContent>
+          </Card>
         </div>
       </div>
     </div>

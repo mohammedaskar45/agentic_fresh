@@ -1,203 +1,173 @@
 import { useState, useEffect } from 'react'
 import { useNavigate } from '@tanstack/react-router'
 import { 
-  FileBadge, 
   Award, 
+  Download, 
+  CheckCircle2, 
   ArrowLeft, 
-  ChevronLeft, 
-  Download,
+  PartyPopper,
   ShieldCheck,
-  CheckCircle2,
-  Bot,
-  Building,
-  Calendar
+  FileBadge,
+  Share2,
+  ChevronRight,
+  Building2,
+  CalendarDays,
+  Hash
 } from 'lucide-react'
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { toast } from 'sonner'
 import { useWorkflowStore } from '@/stores/workflow-store'
 import { incorporationService } from '@/services/incorporation.service'
 import { Badge } from '@/components/ui/badge'
+import { pdfService } from '@/lib/pdf-service'
 
-export default function COIStep() {
+export default function CoiStep() {
   const navigate = useNavigate()
   const workflow = useWorkflowStore()
-  const [isProcessing, setIsProcessing] = useState(false)
-  
-  const [formData, setFormData] = useState({
-    cin_number: '',
-    registration_number: '',
-    incorporation_date: '',
-    certificate_url: ''
-  })
+  const [masterData, setMasterData] = useState<any>(null)
+  const [coiNumber, setCoiNumber] = useState('')
+  const [regDate, setRegDate] = useState('')
 
   useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const response = await incorporationService.getCoi()
-        if (response && response.coi_data) {
-          setFormData(response.coi_data)
-        }
-      } catch (error) {
-        console.error('Failed to fetch COI data:', error)
-      }
-    }
     fetchData()
+    // Simulate COI Generation
+    setCoiNumber(`U${Math.floor(Math.random() * 90000) + 10000}TN${new Date().getFullYear()}PTC${Math.floor(Math.random() * 900000) + 100000}`)
+    setRegDate(new Date().toLocaleDateString('en-IN', { day: '2-digit', month: 'long', year: 'numeric' }))
   }, [])
 
-  const handleSimulateCoi = () => {
-    setFormData({
-      cin_number: 'U' + Math.floor(10000 + Math.random() * 90000) + 'TN' + new Date().getFullYear() + 'PTC' + Math.floor(100000 + Math.random() * 900000),
-      registration_number: Math.floor(100000 + Math.random() * 900000).toString(),
-      incorporation_date: new Date().toISOString().split('T')[0],
-      certificate_url: '#'
-    })
-    toast.success('Certificate of Incorporation (COI) successfully generated!')
+  const fetchData = async () => {
+    try {
+      const md = await incorporationService.getMasterData()
+      setMasterData(md)
+    } catch (error) {
+      console.error('Failed to fetch data:', error)
+    }
+  }
+
+  const handleDownload = () => {
+    if (!masterData) return
+    const content = `GOVERNMENT OF INDIA\nMINISTRY OF CORPORATE AFFAIRS\n\nCERTIFICATE OF INCORPORATION\n\nI hereby certify that ${masterData.company.proposed_name} is this day incorporated under the Companies Act, 2013 and that the company is limited by shares.\n\nThe Corporate Identity Number (CIN) of the company is ${coiNumber}.\n\nGiven under my hand at Chennai this ${regDate}.`
+    pdfService.generateStatutoryPDF('Certificate of Incorporation', content, masterData.company.proposed_name)
   }
 
   const handleComplete = async () => {
-    if (!formData.cin_number) {
-      toast.error('Please ensure COI and CIN are generated.')
-      return
-    }
-
-    setIsProcessing(true)
     try {
-      await incorporationService.saveCoi(formData)
+      await incorporationService.saveCoi({ coi_number: coiNumber, registration_date: regDate })
       workflow.completeStep(7)
-      toast.success('Step 7: Certificate of Incorporation Received!')
+      toast.success('Congratulations! Company officially incorporated.')
       navigate({ to: '/admin/compliance/incorporation' })
     } catch (error) {
-      toast.error('Submission failed. Please try again.')
-    } finally {
-      setIsProcessing(false)
+      toast.error('Failed to save COI.')
     }
   }
 
+  if (!masterData || !masterData.company) {
+    return (
+      <div className='p-20 text-center space-y-4'>
+        <Award className='h-12 w-12 text-amber-400 mx-auto' />
+        <h2 className='text-xl font-bold'>Master Data Missing</h2>
+        <p className='text-sm text-muted-foreground'>Company details are required to generate the Certificate of Incorporation.</p>
+        <Button onClick={() => navigate({ to: '/admin/compliance/incorporation/master-data' })}>Complete Step 0</Button>
+      </div>
+    )
+  }
+
   return (
-    <div className='p-6 space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-500'>
-      <div className='flex items-center justify-between'>
-        <div className='flex items-center gap-3'>
-          <Button variant='ghost' size='icon' onClick={() => navigate({ to: '/admin/compliance/incorporation' })}>
-            <ArrowLeft className='h-5 w-5' />
-          </Button>
-          <div className='p-3 bg-yellow-500/10 rounded-2xl'>
-            <Award className='h-8 w-8 text-yellow-600' />
-          </div>
-          <div>
-            <h1 className='text-2xl font-bold text-yellow-900'>Step 7: Certificate of Incorporation (COI)</h1>
-            <p className='text-sm text-muted-foreground'>The legal birth certificate of your company.</p>
-          </div>
+    <div className='p-6 max-w-5xl mx-auto space-y-12 animate-in fade-in zoom-in-95 duration-700'>
+      {/* Celebration Header */}
+      <div className='text-center space-y-4'>
+        <div className='inline-flex p-4 bg-amber-500/10 rounded-full text-amber-600 animate-bounce'>
+          <PartyPopper className='h-12 w-12' />
         </div>
+        <h1 className='text-4xl font-extrabold tracking-tight text-slate-900'>Registration Successful!</h1>
+        <p className='text-lg text-muted-foreground max-w-2xl mx-auto'>
+          {masterData.company.proposed_name} is now a legally registered entity in India. Your incorporation journey has reached its crown jewel.
+        </p>
       </div>
 
-      <div className='grid grid-cols-1 lg:grid-cols-12 gap-8'>
-        <div className='lg:col-span-8 space-y-6'>
-          <Card className='border-none shadow-2xl bg-gradient-to-br from-yellow-50/50 to-white overflow-hidden relative'>
-            <div className='absolute top-0 right-0 p-8 opacity-5'>
-              <Award className='h-48 w-48' />
-            </div>
-            <CardHeader className='border-b border-yellow-100'>
-              <div className='flex items-center justify-between'>
-                <CardTitle className='text-xl text-yellow-800 font-serif'>Corporate Identity Details</CardTitle>
-                {formData.cin_number && <Badge className='bg-yellow-500 text-white'>OFFICIAL</Badge>}
-              </div>
-            </CardHeader>
-            <CardContent className='pt-8 space-y-8'>
-               <div className='grid grid-cols-1 md:grid-cols-2 gap-8'>
-                 <div className='space-y-2'>
-                    <span className='text-xs font-bold text-yellow-700 uppercase tracking-widest'>Corporate Identification Number (CIN)</span>
-                    <p className='text-2xl font-mono font-bold tracking-wider text-slate-800 break-all'>
-                        {formData.cin_number || 'WAITING FOR ALLOTMENT...'}
-                    </p>
-                 </div>
-                 <div className='space-y-2'>
-                    <span className='text-xs font-bold text-yellow-700 uppercase tracking-widest'>Registration Number</span>
-                    <p className='text-2xl font-mono font-bold text-slate-800'>
-                        {formData.registration_number || '------'}
-                    </p>
-                 </div>
-               </div>
-
-               <div className='flex items-center gap-6 p-4 bg-yellow-500/5 rounded-xl border border-yellow-500/10'>
-                  <div className='flex items-center gap-2'>
-                    <Calendar className='h-4 w-4 text-yellow-600' />
-                    <span className='text-sm font-medium'>Date of Incorporation:</span>
-                    <span className='text-sm font-bold'>{formData.incorporation_date || 'TBD'}</span>
-                  </div>
-                  <div className='flex items-center gap-2 border-l border-yellow-500/20 pl-6'>
-                    <Building className='h-4 w-4 text-yellow-600' />
-                    <span className='text-sm font-medium'>ROC Code:</span>
-                    <span className='text-sm font-bold'>ROC-CHENNAI</span>
-                  </div>
-               </div>
-
-               {formData.cin_number && (
-                 <Button 
-                   variant='outline' 
-                   className='w-full py-8 border-dashed border-yellow-300 hover:bg-yellow-50 group'
-                   onClick={() => {
-                     const pdfContent = '%PDF-1.1\n1 0 obj\n<< /Type /Catalog /Pages 2 0 R >>\nendobj\n2 0 obj\n<< /Type /Pages /Kids [3 0 R] /Count 1 >>\nendobj\n3 0 obj\n<< /Type /Page /Parent 2 0 R /Resources << /Font << /F1 4 0 R >> >> /Contents 5 0 R >>\nendobj\n4 0 obj\n<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica >>\nendobj\n5 0 obj\n<< /Length 44 >>\nstream\nBT\n/F1 24 Tf\n72 720 Td\n(Certificate of Incorporation) Tj\nET\nendstream\nendobj\ntrailer\n<< /Root 1 0 R >>\n%%EOF';
-                     const blob = new Blob([pdfContent], { type: 'application/pdf' });
-                     const url = URL.createObjectURL(blob);
-                     const link = document.createElement('a');
-                     link.href = url;
-                     link.download = `COI_${formData.cin_number || 'Company'}.pdf`;
-                     document.body.appendChild(link);
-                     link.click();
-                     document.body.removeChild(link);
-                     URL.revokeObjectURL(url);
-                     toast.success('Certificate downloaded successfully!');
-                   }}
-                 >
-                    <Download className='mr-2 h-5 w-5 text-yellow-600 group-hover:animate-bounce' />
-                    Download Official Certificate of Incorporation (Form INC-11)
-                 </Button>
-               )}
-            </CardContent>
-          </Card>
-
-          <div className='flex justify-between gap-3'>
-            <Button variant='outline' className='gap-2' onClick={() => navigate({ to: '/admin/compliance/incorporation/pan-tan' })}>
-              <ChevronLeft className='h-4 w-4' /> Back
-            </Button>
-            <div className='flex gap-3'>
-              <Button className='px-8 bg-gradient-to-r from-yellow-600 to-amber-600 hover:from-yellow-700 hover:to-amber-700 text-white border-none shadow-lg' onClick={handleSimulateCoi}>
-                <Bot className='mr-2 h-4 w-4' /> Receive COI from MCA
-              </Button>
-              <Button className='px-8' onClick={handleComplete} disabled={isProcessing || !formData.cin_number}>
-                {isProcessing ? 'Saving...' : 'Finalize Step 7'}
-              </Button>
-            </div>
-          </div>
-        </div>
-
-        <div className='lg:col-span-4'>
-           <Card className='bg-primary/5 border-primary/10 shadow-none h-full'>
-              <CardHeader className='pb-2'>
-                <CardTitle className='text-md flex items-center gap-2 text-primary'>
-                  <Bot className='h-5 w-5' />
-                  Agent Insight
-                </CardTitle>
-              </CardHeader>
-              <CardContent className='space-y-4'>
-                <p className='text-xs leading-relaxed'>
-                  Congratulations! Your company is now a legal entity. 
-                  <br /><br />
-                  The CIN is a unique 21-digit alpha-numeric identifier. You must now display this on all company stationary and nameplates.
-                </p>
-                <div className='space-y-2 pt-4 border-t border-primary/10'>
-                   <div className='flex items-center gap-2 text-[10px]'>
-                      <CheckCircle2 className='h-3 w-3 text-green-500' />
-                      <span>Incorporated under Companies Act 2013</span>
-                   </div>
-                   <div className='flex items-center gap-2 text-[10px]'>
-                      <ShieldCheck className='h-3 w-3 text-blue-500' />
-                      <span>Digital COI Verified</span>
-                   </div>
+      <div className='grid grid-cols-1 lg:grid-cols-2 gap-12 items-center'>
+        {/* Certificate Preview Card */}
+        <Card className='relative overflow-hidden border-none shadow-2xl bg-gradient-to-br from-amber-50 to-white'>
+            <div className='absolute inset-0 border-[16px] border-amber-200/30 m-4 pointer-events-none' />
+            <div className='p-12 text-center space-y-8'>
+                <div className='space-y-2'>
+                    <Building2 className='h-10 w-10 text-amber-700 mx-auto' />
+                    <p className='text-[10px] font-bold uppercase tracking-[0.2em] text-amber-800'>Government of India</p>
+                    <p className='text-xs font-serif italic text-amber-700'>Ministry of Corporate Affairs</p>
                 </div>
-              </CardContent>
-           </Card>
+                
+                <h2 className='text-2xl font-serif font-bold text-slate-800 border-y-2 border-amber-200 py-4'>
+                    Certificate of Incorporation
+                </h2>
+
+                <div className='space-y-4'>
+                    <p className='text-sm leading-relaxed text-slate-600'>
+                        I hereby certify that <span className='font-bold text-slate-900'>{masterData.company.proposed_name}</span> is this day incorporated under the Companies Act, 2013 and that the company is limited by shares.
+                    </p>
+                </div>
+
+                <div className='grid grid-cols-2 gap-4 text-left pt-6'>
+                    <div className='space-y-1'>
+                        <p className='text-[10px] font-bold text-amber-800 uppercase'>CIN Number</p>
+                        <p className='text-xs font-mono font-bold'>{coiNumber}</p>
+                    </div>
+                    <div className='space-y-1'>
+                        <p className='text-[10px] font-bold text-amber-800 uppercase'>Registration Date</p>
+                        <p className='text-xs font-bold'>{regDate}</p>
+                    </div>
+                </div>
+
+                <div className='pt-8'>
+                    <FileBadge className='h-16 w-16 text-amber-500/20 mx-auto absolute bottom-12 right-12' />
+                    <div className='w-32 h-0.5 bg-slate-200 mx-auto' />
+                    <p className='text-[10px] mt-2 text-slate-400'>Registrar of Companies</p>
+                </div>
+            </div>
+        </Card>
+
+        {/* Action Panel */}
+        <div className='space-y-8'>
+            <div className='space-y-4'>
+                <h3 className='text-xl font-bold'>Next Actions</h3>
+                <div className='space-y-4'>
+                    {[
+                        { icon: Building2, label: 'Open Corporate Bank Account', desc: 'Use COI and Board Resolution to open account.' },
+                        { icon: Award, label: 'Appoint First Auditor', desc: 'Mandatory within 30 days of incorporation.' },
+                        { icon: ShieldCheck, label: 'File INC-20A', desc: 'Declare commencement of business.' }
+                    ].map((item, idx) => (
+                        <div key={idx} className='flex gap-4 p-4 rounded-2xl border border-slate-100 hover:border-amber-200 hover:bg-amber-50 transition-all'>
+                            <div className='p-2 bg-white shadow-sm rounded-xl h-fit'>
+                                <item.icon className='h-5 w-5 text-amber-600' />
+                            </div>
+                            <div>
+                                <p className='text-sm font-bold'>{item.label}</p>
+                                <p className='text-xs text-muted-foreground'>{item.desc}</p>
+                            </div>
+                        </div>
+                    ))}
+                </div>
+            </div>
+
+            <div className='flex flex-col gap-3'>
+                <Button 
+                    className='w-full py-6 text-lg bg-amber-600 hover:bg-amber-700 shadow-xl shadow-amber-600/20 rounded-2xl gap-2'
+                    onClick={handleDownload}
+                >
+                    <Download className='h-5 w-5' /> Download Certificate (PDF)
+                </Button>
+                <div className='grid grid-cols-2 gap-3'>
+                    <Button variant='outline' className='py-6 rounded-2xl gap-2'>
+                        <Share2 className='h-4 w-4' /> Share COI
+                    </Button>
+                    <Button 
+                        className='py-6 rounded-2xl gap-2 bg-slate-900 text-white'
+                        onClick={handleComplete}
+                    >
+                        Proceed to Post-COI <ChevronRight className='h-4 w-4' />
+                    </Button>
+                </div>
+            </div>
         </div>
       </div>
     </div>

@@ -31,8 +31,14 @@ export default function GSTStep() {
   const [formData, setFormData] = useState({
     gstin: '',
     state_jurisdiction: 'Tamil Nadu',
+    center_jurisdiction: '',
+    hsn_sac_code: '',
+    nature_of_possession_detailed: 'Rented',
     taxpayer_type: 'Regular',
-    registration_date: ''
+    registration_date: '',
+    epfo_number: '',
+    esic_number: '',
+    establishment_id: ''
   })
 
   useEffect(() => {
@@ -130,10 +136,30 @@ export default function GSTStep() {
                     <Label>Taxpayer Type</Label>
                     <Input value={formData.taxpayer_type} readOnly className='bg-muted/30' />
                  </div>
-                 <div className='space-y-2 flex items-center gap-2 pt-8'>
-                    <MapPin className='h-4 w-4 text-muted-foreground' />
-                    <span className='text-sm font-medium'>Jurisdiction: {formData.state_jurisdiction}</span>
-                 </div>
+                  <div className='space-y-2'>
+                    <Label>Center Jurisdiction (Commissionerate/Division/Range)</Label>
+                    <Input 
+                      placeholder='Ex: Chennai South / Div II / Range 1' 
+                      value={formData.center_jurisdiction}
+                      onChange={(e) => setFormData({...formData, center_jurisdiction: e.target.value})}
+                    />
+                  </div>
+                  <div className='space-y-2'>
+                    <Label>Main HSN / SAC Code *</Label>
+                    <Input 
+                      placeholder='Ex: 998311 (IT Services)' 
+                      value={formData.hsn_sac_code}
+                      onChange={(e) => setFormData({...formData, hsn_sac_code: e.target.value})}
+                    />
+                  </div>
+                  <div className='space-y-2'>
+                     <Label>Nature of Possession (Detailed)</Label>
+                     <Input value={formData.nature_of_possession_detailed} onChange={(e) => setFormData({...formData, nature_of_possession_detailed: e.target.value})} />
+                  </div>
+                  <div className='space-y-2 flex items-center gap-2 pt-8'>
+                     <MapPin className='h-4 w-4 text-muted-foreground' />
+                     <span className='text-sm font-medium'>State Jurisdiction: {formData.state_jurisdiction}</span>
+                  </div>
                </div>
             </CardContent>
           </Card>

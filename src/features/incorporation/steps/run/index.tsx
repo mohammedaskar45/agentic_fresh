@@ -29,7 +29,10 @@ export default function RUNStep() {
   
   const [formData, setFormData] = useState({
     proposed_name: '',
-    nic_code: '62011', // Default: Software development
+    proposed_name_2: '',
+    nic_code: '62011',
+    nic_code_id: '',
+    tm_certificate_ref: '',
     significance: '',
     status: 'pending'
   })
@@ -118,7 +121,7 @@ export default function RUNStep() {
               <div className='space-y-4'>
                 <div className='grid grid-cols-1 md:grid-cols-2 gap-6'>
                    <div className='space-y-2'>
-                        <Label>Proposed Company Name</Label>
+                        <Label>Choice 1: Proposed Name *</Label>
                         <div className='flex gap-2'>
                             <Input 
                                 placeholder='Ex: ALPHA TECH'
@@ -132,9 +135,18 @@ export default function RUNStep() {
                         </div>
                    </div>
                    <div className='space-y-2'>
+                        <Label>Choice 2: Alternative Name</Label>
+                        <Input 
+                            placeholder='Ex: ALPHA SOLUTIONS'
+                            value={formData.proposed_name_2}
+                            onChange={(e) => setFormData({...formData, proposed_name_2: e.target.value.toUpperCase()})}
+                            className='font-bold'
+                        />
+                   </div>
+                   <div className='space-y-2'>
                         <Label>Business Category (NIC Code)</Label>
                         <Select value={formData.nic_code} onValueChange={(val) => setFormData({...formData, nic_code: val})}>
-                            <SelectTrigger>
+                            <SelectTrigger className="w-full">
                                 <Briefcase className='h-4 w-4 mr-2 text-slate-400' />
                                 <SelectValue />
                             </SelectTrigger>

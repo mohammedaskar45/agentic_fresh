@@ -117,5 +117,46 @@ export const incorporationService = {
   getWorkflowStatus: async () => {
     const response = await axiosInstance.get('/v1/incorporation/status')
     return response.data
+  },
+
+  // Master Data (Step 0) CRUD
+  saveMasterData: async (data: any) => {
+    const response = await axiosInstance.post('/v1/incorporation/master-data', data)
+    return response.data
+  },
+
+  getMasterData: async () => {
+    const response = await axiosInstance.get('/v1/incorporation/master-data')
+    return response.data
+  },
+
+  uploadDocument: async (stepId: number, file: File) => {
+    const formData = new FormData()
+    formData.append('stepId', stepId.toString())
+    formData.append('file', file)
+    const response = await axiosInstance.post('/v1/incorporation/upload', formData, {
+      headers: { 'Content-Type': 'multipart/form-data' }
+    })
+    return response.data
+  },
+
+  verifyDocument: async (stepId: number) => {
+    const response = await axiosInstance.post('/v1/incorporation/verify', { stepId })
+    return response.data
+  },
+
+  getRecord: async () => {
+    const response = await axiosInstance.get('/v1/incorporation/record')
+    return response.data
+  },
+
+  getLogs: async () => {
+    const response = await axiosInstance.get('/v1/incorporation/logs')
+    return response.data
+  },
+
+  getDropdownMasters: async () => {
+    const response = await axiosInstance.get('/v1/incorporation/dropdown-masters')
+    return response.data
   }
 }

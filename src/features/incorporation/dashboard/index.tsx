@@ -12,11 +12,13 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Button } from '@/components/ui/button'
 import { Progress } from '@/components/ui/progress'
 import { WorkflowStepper } from '../components/workflow-stepper'
+import { ActivityTimeline } from '../components/activity-timeline'
 import { useWorkflowStore } from '@/stores/workflow-store'
 import { incorporationService } from '@/services/incorporation.service'
 import { toast } from 'sonner'
 
 const ALL_STEP_TITLES = [
+  { id: 0, title: 'Master Data Profiling', description: 'Complete the consolidated company, stakeholder and professional profile.' },
   { id: 1, title: 'Digital Signature (DSC)', description: 'Acquire Digital Signature Certificates for all proposed directors.' },
   { id: 2, title: 'Director Identification (DIN)', description: 'Obtain DIN for the proposed directors of the company.' },
   { id: 3, title: 'Name Approval (RUN)', description: 'Reservation of Unique Name through the MCA portal.' },
@@ -35,7 +37,7 @@ export default function IncorporationDashboard() {
   const workflow = useWorkflowStore()
   const [stats, setStats] = useState({
     daysElapsed: 1,
-    pendingTasks: 11,
+    pendingTasks: 12,
     vaultFiles: 0,
     progress: 0
   })
@@ -81,6 +83,7 @@ export default function IncorporationDashboard() {
 
   const navigateToStep = (id: number) => {
     const routeMap: Record<number, string> = {
+      0: '/admin/compliance/incorporation/master-data',
       1: '/admin/compliance/incorporation/dsc',
       2: '/admin/compliance/incorporation/din',
       3: '/admin/compliance/incorporation/run',
@@ -130,7 +133,7 @@ export default function IncorporationDashboard() {
                 <span className='text-2xl font-bold text-primary'>{progress}%</span>
               </div>
               <CardDescription>
-                {progress === 100 ? 'Journey Completed Successfully!' : `Step ${workflow.currentStepId} of 11: ${currentStep.title}`}
+                {progress === 100 ? 'Journey Completed Successfully!' : `Step ${workflow.currentStepId} of 12: ${currentStep?.title}`}
               </CardDescription>
             </CardHeader>
             <CardContent>
@@ -194,7 +197,7 @@ export default function IncorporationDashboard() {
           <Card className='h-full border-none shadow-xl bg-card/50 backdrop-blur-sm'>
             <CardHeader>
               <CardTitle className='text-lg'>Workflow Timeline</CardTitle>
-              <CardDescription>11 Steps to Incorporation</CardDescription>
+              <CardDescription>12 Steps to Incorporation</CardDescription>
             </CardHeader>
             <CardContent className='max-h-[600px] overflow-y-auto pr-2 custom-scrollbar'>
               <WorkflowStepper 
@@ -204,6 +207,10 @@ export default function IncorporationDashboard() {
               />
             </CardContent>
           </Card>
+          
+          <div className='mt-6'>
+            <ActivityTimeline />
+          </div>
         </div>
       </div>
     </div>

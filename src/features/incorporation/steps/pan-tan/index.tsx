@@ -28,8 +28,15 @@ export default function PanTanStep() {
   
   const [formData, setFormData] = useState({
     pan_number: '',
+    pan_area_code: '',
+    pan_ao_type: '',
+    pan_range_code: '',
+    pan_ao_no: '',
     tan_number: '',
-    ao_code: 'CHN W 123 1',
+    tan_area_code: '',
+    tan_ao_type: '',
+    tan_range_code: '',
+    tan_ao_no: '',
     allotment_date: ''
   })
 
@@ -38,7 +45,7 @@ export default function PanTanStep() {
       try {
         const response = await incorporationService.getPanTan()
         if (response && response.pan_tan_data) {
-          setFormData(response.pan_tan_data)
+          setFormData(prev => ({ ...prev, ...response.pan_tan_data }))
         }
       } catch (error) {
         console.error('Failed to fetch PAN/TAN data:', error)
@@ -125,13 +132,31 @@ export default function PanTanStep() {
               <CardContent className='space-y-4'>
                 <div className='space-y-2'>
                   <Label>Allotted PAN</Label>
-                  <Input 
-                    placeholder='Fetching from NSDL...' 
-                    value={formData.pan_number}
-                    readOnly
-                    className='bg-muted/30 font-mono text-lg tracking-widest uppercase'
-                  />
-                </div>
+                    <Input 
+                      placeholder='Fetching from NSDL...' 
+                      value={formData.pan_number}
+                      readOnly
+                      className='bg-muted/30 font-mono text-lg tracking-widest uppercase mb-4'
+                    />
+                    <div className='grid grid-cols-2 gap-2 mt-4'>
+                      <div className='space-y-1'>
+                        <Label className='text-[10px]'>Area Code</Label>
+                        <Input className='h-8 text-xs' value={formData.pan_area_code} onChange={(e) => setFormData({...formData, pan_area_code: e.target.value.toUpperCase()})} />
+                      </div>
+                      <div className='space-y-1'>
+                        <Label className='text-[10px]'>AO Type</Label>
+                        <Input className='h-8 text-xs' value={formData.pan_ao_type} onChange={(e) => setFormData({...formData, pan_ao_type: e.target.value.toUpperCase()})} />
+                      </div>
+                      <div className='space-y-1'>
+                        <Label className='text-[10px]'>Range Code</Label>
+                        <Input className='h-8 text-xs' value={formData.pan_range_code} onChange={(e) => setFormData({...formData, pan_range_code: e.target.value.toUpperCase()})} />
+                      </div>
+                      <div className='space-y-1'>
+                        <Label className='text-[10px]'>AO No.</Label>
+                        <Input className='h-8 text-xs' value={formData.pan_ao_no} onChange={(e) => setFormData({...formData, pan_ao_no: e.target.value.toUpperCase()})} />
+                      </div>
+                    </div>
+                  </div>
               </CardContent>
             </Card>
 
@@ -146,13 +171,31 @@ export default function PanTanStep() {
               <CardContent className='space-y-4'>
                 <div className='space-y-2'>
                   <Label>Allotted TAN</Label>
-                  <Input 
-                    placeholder='Fetching from IT Dept...' 
-                    value={formData.tan_number}
-                    readOnly
-                    className='bg-muted/30 font-mono text-lg tracking-widest uppercase'
-                  />
-                </div>
+                    <Input 
+                      placeholder='Fetching from IT Dept...' 
+                      value={formData.tan_number}
+                      readOnly
+                      className='bg-muted/30 font-mono text-lg tracking-widest uppercase mb-4'
+                    />
+                    <div className='grid grid-cols-2 gap-2 mt-4'>
+                      <div className='space-y-1'>
+                        <Label className='text-[10px]'>Area Code</Label>
+                        <Input className='h-8 text-xs' value={formData.tan_area_code} onChange={(e) => setFormData({...formData, tan_area_code: e.target.value.toUpperCase()})} />
+                      </div>
+                      <div className='space-y-1'>
+                        <Label className='text-[10px]'>AO Type</Label>
+                        <Input className='h-8 text-xs' value={formData.tan_ao_type} onChange={(e) => setFormData({...formData, tan_ao_type: e.target.value.toUpperCase()})} />
+                      </div>
+                      <div className='space-y-1'>
+                        <Label className='text-[10px]'>Range Code</Label>
+                        <Input className='h-8 text-xs' value={formData.tan_range_code} onChange={(e) => setFormData({...formData, tan_range_code: e.target.value.toUpperCase()})} />
+                      </div>
+                      <div className='space-y-1'>
+                        <Label className='text-[10px]'>AO No.</Label>
+                        <Input className='h-8 text-xs' value={formData.tan_ao_no} onChange={(e) => setFormData({...formData, tan_ao_no: e.target.value.toUpperCase()})} />
+                      </div>
+                    </div>
+                  </div>
               </CardContent>
             </Card>
           </div>
@@ -161,11 +204,7 @@ export default function PanTanStep() {
             <CardHeader>
               <CardTitle className='text-sm font-bold'>Additional Details</CardTitle>
             </CardHeader>
-            <CardContent className='grid grid-cols-2 gap-4'>
-               <div className='space-y-2'>
-                 <Label>AO Code</Label>
-                 <Input value={formData.ao_code} readOnly className='bg-muted/30' />
-               </div>
+            <CardContent className='grid grid-cols-1 gap-4'>
                <div className='space-y-2'>
                  <Label>Allotment Date</Label>
                  <Input type='date' value={formData.allotment_date} readOnly className='bg-muted/30' />
