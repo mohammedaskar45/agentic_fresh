@@ -37,6 +37,7 @@ import { Route as AuthenticatedAdminIdentityRolesRouteImport } from './routes/_a
 import { Route as AuthenticatedAdminIdentityMatrixRouteImport } from './routes/_authenticated/admin/identity/matrix'
 import { Route as AuthenticatedAdminComplianceRightsIssueIndexRouteImport } from './routes/_authenticated/admin/compliance/rights-issue/index'
 import { Route as AuthenticatedAdminComplianceIncorporationIndexRouteImport } from './routes/_authenticated/admin/compliance/incorporation/index'
+import { Route as AuthenticatedAdminComplianceBuybackIndexRouteImport } from './routes/_authenticated/admin/compliance/buyback/index'
 import { Route as AuthenticatedAdminComplianceRightsIssuePreOfferRouteImport } from './routes/_authenticated/admin/compliance/rights-issue/pre-offer'
 import { Route as AuthenticatedAdminComplianceRightsIssueOfferPeriodRouteImport } from './routes/_authenticated/admin/compliance/rights-issue/offer-period'
 import { Route as AuthenticatedAdminComplianceRightsIssueMasterDataRouteImport } from './routes/_authenticated/admin/compliance/rights-issue/master-data'
@@ -59,6 +60,8 @@ import { Route as AuthenticatedAdminComplianceIncorporationCommencementRouteImpo
 import { Route as AuthenticatedAdminComplianceIncorporationCoiRouteImport } from './routes/_authenticated/admin/compliance/incorporation/coi'
 import { Route as AuthenticatedAdminComplianceIncorporationBankRouteImport } from './routes/_authenticated/admin/compliance/incorporation/bank'
 import { Route as AuthenticatedAdminComplianceIncorporationAuditorRouteImport } from './routes/_authenticated/admin/compliance/incorporation/auditor'
+import { Route as AuthenticatedAdminComplianceBuybackMasterDataRouteImport } from './routes/_authenticated/admin/compliance/buyback/master-data'
+import { Route as AuthenticatedAdminComplianceBuybackDashboardRouteImport } from './routes/_authenticated/admin/compliance/buyback/dashboard'
 
 const AuthenticatedRouteRoute = AuthenticatedRouteRouteImport.update({
   id: '/_authenticated',
@@ -212,6 +215,12 @@ const AuthenticatedAdminComplianceIncorporationIndexRoute =
     path: '/admin/compliance/incorporation/',
     getParentRoute: () => AuthenticatedRouteRoute,
   } as any)
+const AuthenticatedAdminComplianceBuybackIndexRoute =
+  AuthenticatedAdminComplianceBuybackIndexRouteImport.update({
+    id: '/admin/compliance/buyback/',
+    path: '/admin/compliance/buyback/',
+    getParentRoute: () => AuthenticatedRouteRoute,
+  } as any)
 const AuthenticatedAdminComplianceRightsIssuePreOfferRoute =
   AuthenticatedAdminComplianceRightsIssuePreOfferRouteImport.update({
     id: '/admin/compliance/rights-issue/pre-offer',
@@ -344,6 +353,18 @@ const AuthenticatedAdminComplianceIncorporationAuditorRoute =
     path: '/admin/compliance/incorporation/auditor',
     getParentRoute: () => AuthenticatedRouteRoute,
   } as any)
+const AuthenticatedAdminComplianceBuybackMasterDataRoute =
+  AuthenticatedAdminComplianceBuybackMasterDataRouteImport.update({
+    id: '/admin/compliance/buyback/master-data',
+    path: '/admin/compliance/buyback/master-data',
+    getParentRoute: () => AuthenticatedRouteRoute,
+  } as any)
+const AuthenticatedAdminComplianceBuybackDashboardRoute =
+  AuthenticatedAdminComplianceBuybackDashboardRouteImport.update({
+    id: '/admin/compliance/buyback/dashboard',
+    path: '/admin/compliance/buyback/dashboard',
+    getParentRoute: () => AuthenticatedRouteRoute,
+  } as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof AuthenticatedIndexRoute
@@ -371,6 +392,8 @@ export interface FileRoutesByFullPath {
   '/admin/identity/matrix': typeof AuthenticatedAdminIdentityMatrixRoute
   '/admin/identity/roles': typeof AuthenticatedAdminIdentityRolesRoute
   '/admin/identity/users': typeof AuthenticatedAdminIdentityUsersRoute
+  '/admin/compliance/buyback/dashboard': typeof AuthenticatedAdminComplianceBuybackDashboardRoute
+  '/admin/compliance/buyback/master-data': typeof AuthenticatedAdminComplianceBuybackMasterDataRoute
   '/admin/compliance/incorporation/auditor': typeof AuthenticatedAdminComplianceIncorporationAuditorRoute
   '/admin/compliance/incorporation/bank': typeof AuthenticatedAdminComplianceIncorporationBankRoute
   '/admin/compliance/incorporation/coi': typeof AuthenticatedAdminComplianceIncorporationCoiRoute
@@ -393,6 +416,7 @@ export interface FileRoutesByFullPath {
   '/admin/compliance/rights-issue/master-data': typeof AuthenticatedAdminComplianceRightsIssueMasterDataRoute
   '/admin/compliance/rights-issue/offer-period': typeof AuthenticatedAdminComplianceRightsIssueOfferPeriodRoute
   '/admin/compliance/rights-issue/pre-offer': typeof AuthenticatedAdminComplianceRightsIssuePreOfferRoute
+  '/admin/compliance/buyback/': typeof AuthenticatedAdminComplianceBuybackIndexRoute
   '/admin/compliance/incorporation/': typeof AuthenticatedAdminComplianceIncorporationIndexRoute
   '/admin/compliance/rights-issue/': typeof AuthenticatedAdminComplianceRightsIssueIndexRoute
 }
@@ -421,6 +445,8 @@ export interface FileRoutesByTo {
   '/admin/identity/matrix': typeof AuthenticatedAdminIdentityMatrixRoute
   '/admin/identity/roles': typeof AuthenticatedAdminIdentityRolesRoute
   '/admin/identity/users': typeof AuthenticatedAdminIdentityUsersRoute
+  '/admin/compliance/buyback/dashboard': typeof AuthenticatedAdminComplianceBuybackDashboardRoute
+  '/admin/compliance/buyback/master-data': typeof AuthenticatedAdminComplianceBuybackMasterDataRoute
   '/admin/compliance/incorporation/auditor': typeof AuthenticatedAdminComplianceIncorporationAuditorRoute
   '/admin/compliance/incorporation/bank': typeof AuthenticatedAdminComplianceIncorporationBankRoute
   '/admin/compliance/incorporation/coi': typeof AuthenticatedAdminComplianceIncorporationCoiRoute
@@ -443,6 +469,7 @@ export interface FileRoutesByTo {
   '/admin/compliance/rights-issue/master-data': typeof AuthenticatedAdminComplianceRightsIssueMasterDataRoute
   '/admin/compliance/rights-issue/offer-period': typeof AuthenticatedAdminComplianceRightsIssueOfferPeriodRoute
   '/admin/compliance/rights-issue/pre-offer': typeof AuthenticatedAdminComplianceRightsIssuePreOfferRoute
+  '/admin/compliance/buyback': typeof AuthenticatedAdminComplianceBuybackIndexRoute
   '/admin/compliance/incorporation': typeof AuthenticatedAdminComplianceIncorporationIndexRoute
   '/admin/compliance/rights-issue': typeof AuthenticatedAdminComplianceRightsIssueIndexRoute
 }
@@ -474,6 +501,8 @@ export interface FileRoutesById {
   '/_authenticated/admin/identity/matrix': typeof AuthenticatedAdminIdentityMatrixRoute
   '/_authenticated/admin/identity/roles': typeof AuthenticatedAdminIdentityRolesRoute
   '/_authenticated/admin/identity/users': typeof AuthenticatedAdminIdentityUsersRoute
+  '/_authenticated/admin/compliance/buyback/dashboard': typeof AuthenticatedAdminComplianceBuybackDashboardRoute
+  '/_authenticated/admin/compliance/buyback/master-data': typeof AuthenticatedAdminComplianceBuybackMasterDataRoute
   '/_authenticated/admin/compliance/incorporation/auditor': typeof AuthenticatedAdminComplianceIncorporationAuditorRoute
   '/_authenticated/admin/compliance/incorporation/bank': typeof AuthenticatedAdminComplianceIncorporationBankRoute
   '/_authenticated/admin/compliance/incorporation/coi': typeof AuthenticatedAdminComplianceIncorporationCoiRoute
@@ -496,6 +525,7 @@ export interface FileRoutesById {
   '/_authenticated/admin/compliance/rights-issue/master-data': typeof AuthenticatedAdminComplianceRightsIssueMasterDataRoute
   '/_authenticated/admin/compliance/rights-issue/offer-period': typeof AuthenticatedAdminComplianceRightsIssueOfferPeriodRoute
   '/_authenticated/admin/compliance/rights-issue/pre-offer': typeof AuthenticatedAdminComplianceRightsIssuePreOfferRoute
+  '/_authenticated/admin/compliance/buyback/': typeof AuthenticatedAdminComplianceBuybackIndexRoute
   '/_authenticated/admin/compliance/incorporation/': typeof AuthenticatedAdminComplianceIncorporationIndexRoute
   '/_authenticated/admin/compliance/rights-issue/': typeof AuthenticatedAdminComplianceRightsIssueIndexRoute
 }
@@ -527,6 +557,8 @@ export interface FileRouteTypes {
     | '/admin/identity/matrix'
     | '/admin/identity/roles'
     | '/admin/identity/users'
+    | '/admin/compliance/buyback/dashboard'
+    | '/admin/compliance/buyback/master-data'
     | '/admin/compliance/incorporation/auditor'
     | '/admin/compliance/incorporation/bank'
     | '/admin/compliance/incorporation/coi'
@@ -549,6 +581,7 @@ export interface FileRouteTypes {
     | '/admin/compliance/rights-issue/master-data'
     | '/admin/compliance/rights-issue/offer-period'
     | '/admin/compliance/rights-issue/pre-offer'
+    | '/admin/compliance/buyback/'
     | '/admin/compliance/incorporation/'
     | '/admin/compliance/rights-issue/'
   fileRoutesByTo: FileRoutesByTo
@@ -577,6 +610,8 @@ export interface FileRouteTypes {
     | '/admin/identity/matrix'
     | '/admin/identity/roles'
     | '/admin/identity/users'
+    | '/admin/compliance/buyback/dashboard'
+    | '/admin/compliance/buyback/master-data'
     | '/admin/compliance/incorporation/auditor'
     | '/admin/compliance/incorporation/bank'
     | '/admin/compliance/incorporation/coi'
@@ -599,6 +634,7 @@ export interface FileRouteTypes {
     | '/admin/compliance/rights-issue/master-data'
     | '/admin/compliance/rights-issue/offer-period'
     | '/admin/compliance/rights-issue/pre-offer'
+    | '/admin/compliance/buyback'
     | '/admin/compliance/incorporation'
     | '/admin/compliance/rights-issue'
   id:
@@ -629,6 +665,8 @@ export interface FileRouteTypes {
     | '/_authenticated/admin/identity/matrix'
     | '/_authenticated/admin/identity/roles'
     | '/_authenticated/admin/identity/users'
+    | '/_authenticated/admin/compliance/buyback/dashboard'
+    | '/_authenticated/admin/compliance/buyback/master-data'
     | '/_authenticated/admin/compliance/incorporation/auditor'
     | '/_authenticated/admin/compliance/incorporation/bank'
     | '/_authenticated/admin/compliance/incorporation/coi'
@@ -651,6 +689,7 @@ export interface FileRouteTypes {
     | '/_authenticated/admin/compliance/rights-issue/master-data'
     | '/_authenticated/admin/compliance/rights-issue/offer-period'
     | '/_authenticated/admin/compliance/rights-issue/pre-offer'
+    | '/_authenticated/admin/compliance/buyback/'
     | '/_authenticated/admin/compliance/incorporation/'
     | '/_authenticated/admin/compliance/rights-issue/'
   fileRoutesById: FileRoutesById
@@ -868,6 +907,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedAdminComplianceIncorporationIndexRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
+    '/_authenticated/admin/compliance/buyback/': {
+      id: '/_authenticated/admin/compliance/buyback/'
+      path: '/admin/compliance/buyback'
+      fullPath: '/admin/compliance/buyback/'
+      preLoaderRoute: typeof AuthenticatedAdminComplianceBuybackIndexRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
     '/_authenticated/admin/compliance/rights-issue/pre-offer': {
       id: '/_authenticated/admin/compliance/rights-issue/pre-offer'
       path: '/admin/compliance/rights-issue/pre-offer'
@@ -1022,6 +1068,20 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedAdminComplianceIncorporationAuditorRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
+    '/_authenticated/admin/compliance/buyback/master-data': {
+      id: '/_authenticated/admin/compliance/buyback/master-data'
+      path: '/admin/compliance/buyback/master-data'
+      fullPath: '/admin/compliance/buyback/master-data'
+      preLoaderRoute: typeof AuthenticatedAdminComplianceBuybackMasterDataRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/admin/compliance/buyback/dashboard': {
+      id: '/_authenticated/admin/compliance/buyback/dashboard'
+      path: '/admin/compliance/buyback/dashboard'
+      fullPath: '/admin/compliance/buyback/dashboard'
+      preLoaderRoute: typeof AuthenticatedAdminComplianceBuybackDashboardRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
   }
 }
 
@@ -1058,6 +1118,8 @@ interface AuthenticatedRouteRouteChildren {
   AuthenticatedAdminIdentityMatrixRoute: typeof AuthenticatedAdminIdentityMatrixRoute
   AuthenticatedAdminIdentityRolesRoute: typeof AuthenticatedAdminIdentityRolesRoute
   AuthenticatedAdminIdentityUsersRoute: typeof AuthenticatedAdminIdentityUsersRoute
+  AuthenticatedAdminComplianceBuybackDashboardRoute: typeof AuthenticatedAdminComplianceBuybackDashboardRoute
+  AuthenticatedAdminComplianceBuybackMasterDataRoute: typeof AuthenticatedAdminComplianceBuybackMasterDataRoute
   AuthenticatedAdminComplianceIncorporationAuditorRoute: typeof AuthenticatedAdminComplianceIncorporationAuditorRoute
   AuthenticatedAdminComplianceIncorporationBankRoute: typeof AuthenticatedAdminComplianceIncorporationBankRoute
   AuthenticatedAdminComplianceIncorporationCoiRoute: typeof AuthenticatedAdminComplianceIncorporationCoiRoute
@@ -1080,6 +1142,7 @@ interface AuthenticatedRouteRouteChildren {
   AuthenticatedAdminComplianceRightsIssueMasterDataRoute: typeof AuthenticatedAdminComplianceRightsIssueMasterDataRoute
   AuthenticatedAdminComplianceRightsIssueOfferPeriodRoute: typeof AuthenticatedAdminComplianceRightsIssueOfferPeriodRoute
   AuthenticatedAdminComplianceRightsIssuePreOfferRoute: typeof AuthenticatedAdminComplianceRightsIssuePreOfferRoute
+  AuthenticatedAdminComplianceBuybackIndexRoute: typeof AuthenticatedAdminComplianceBuybackIndexRoute
   AuthenticatedAdminComplianceIncorporationIndexRoute: typeof AuthenticatedAdminComplianceIncorporationIndexRoute
   AuthenticatedAdminComplianceRightsIssueIndexRoute: typeof AuthenticatedAdminComplianceRightsIssueIndexRoute
 }
@@ -1094,6 +1157,10 @@ const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
   AuthenticatedAdminIdentityMatrixRoute: AuthenticatedAdminIdentityMatrixRoute,
   AuthenticatedAdminIdentityRolesRoute: AuthenticatedAdminIdentityRolesRoute,
   AuthenticatedAdminIdentityUsersRoute: AuthenticatedAdminIdentityUsersRoute,
+  AuthenticatedAdminComplianceBuybackDashboardRoute:
+    AuthenticatedAdminComplianceBuybackDashboardRoute,
+  AuthenticatedAdminComplianceBuybackMasterDataRoute:
+    AuthenticatedAdminComplianceBuybackMasterDataRoute,
   AuthenticatedAdminComplianceIncorporationAuditorRoute:
     AuthenticatedAdminComplianceIncorporationAuditorRoute,
   AuthenticatedAdminComplianceIncorporationBankRoute:
@@ -1138,6 +1205,8 @@ const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
     AuthenticatedAdminComplianceRightsIssueOfferPeriodRoute,
   AuthenticatedAdminComplianceRightsIssuePreOfferRoute:
     AuthenticatedAdminComplianceRightsIssuePreOfferRoute,
+  AuthenticatedAdminComplianceBuybackIndexRoute:
+    AuthenticatedAdminComplianceBuybackIndexRoute,
   AuthenticatedAdminComplianceIncorporationIndexRoute:
     AuthenticatedAdminComplianceIncorporationIndexRoute,
   AuthenticatedAdminComplianceRightsIssueIndexRoute:
