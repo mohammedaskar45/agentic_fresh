@@ -108,6 +108,9 @@ export const incorporationService = {
   saveCommencement: async (data: any) => axiosInstance.post('/v1/incorporation/commencement', data),
   getCommencement: async () => (await axiosInstance.get('/v1/incorporation/commencement')).data,
 
+  saveAuditor: async (data: any) => axiosInstance.post('/v1/incorporation/auditor', data),
+  getAuditor: async () => (await axiosInstance.get('/v1/incorporation/auditor')).data,
+
   getStats: async () => {
     const response = await axiosInstance.get('/v1/incorporation/stats')
     return response.data

@@ -65,7 +65,7 @@ export default function CommencementStep() {
     setIsProcessing(true)
     try {
       await incorporationService.saveCommencement({ status: 'filed' })
-      workflow.completeStep(11)
+      workflow.completeStep(12)
       toast.success('Congratulations! Your company is now fully compliant and ready for business.')
       navigate({ to: '/admin/compliance/incorporation' })
     } catch (error) {
@@ -97,7 +97,7 @@ export default function CommencementStep() {
             <Rocket className='h-8 w-8 text-indigo-600' />
           </div>
           <div>
-            <h1 className='text-2xl font-bold'>Step 11: Commencement of Business (INC-20A)</h1>
+            <h1 className='text-2xl font-bold'>Step 12: Commencement of Business (INC-20A)</h1>
             <p className='text-sm text-muted-foreground'>Final statutory filing to officially start business operations.</p>
           </div>
         </div>
@@ -117,7 +117,7 @@ export default function CommencementStep() {
             </CardHeader>
             <CardContent>
                 <UploadGate 
-                    stepId={11} 
+                    stepId={12} 
                     docTitle='Bank Statement (Subscription Proof)' 
                     onVerified={() => setIsBankStatementVerified(true)} 
                 />
@@ -148,7 +148,7 @@ export default function CommencementStep() {
                 </div>
 
                 <UploadGate 
-                    stepId={12} // Virtual ID for declaration
+                    stepId={13} // Virtual ID for declaration
                     docTitle='Signed INC-20A Declaration' 
                     onVerified={() => setIsVerified(true)} 
                 />

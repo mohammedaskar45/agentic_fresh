@@ -29,7 +29,8 @@ const ALL_STEP_TITLES = [
   { id: 8, title: 'Bank Account Opening', description: 'Corporate bank account setup based on COI.' },
   { id: 9, title: 'GST Registration', description: 'Applying for Goods and Services Tax identification.' },
   { id: 10, title: 'PF & ESI Registration', description: 'Mandatory labor law registrations for the new entity.' },
-  { id: 11, title: 'Commencement of Business', description: 'Filing the declaration of business commencement.' },
+  { id: 11, title: 'First Auditor Appointment', description: 'Appointing statutory auditors within 30 days of registration.' },
+  { id: 12, title: 'Commencement of Business', description: 'Filing the declaration of business commencement (INC-20A).' },
 ]
 
 export default function IncorporationDashboard() {
@@ -37,9 +38,10 @@ export default function IncorporationDashboard() {
   const workflow = useWorkflowStore()
   const [stats, setStats] = useState({
     daysElapsed: 1,
-    pendingTasks: 12,
+    pendingTasks: 13,
     vaultFiles: 0,
-    progress: 0
+    progress: 0,
+    deadlines: [] as any[]
   })
 
   useEffect(() => {
@@ -94,7 +96,8 @@ export default function IncorporationDashboard() {
       8: '/admin/compliance/incorporation/bank',
       9: '/admin/compliance/incorporation/gst',
       10: '/admin/compliance/incorporation/labor',
-      11: '/admin/compliance/incorporation/commencement',
+      11: '/admin/compliance/incorporation/auditor',
+      12: '/admin/compliance/incorporation/commencement',
     }
     navigate({ to: routeMap[id] || '#' })
   }
@@ -133,7 +136,7 @@ export default function IncorporationDashboard() {
                 <span className='text-2xl font-bold text-primary'>{progress}%</span>
               </div>
               <CardDescription>
-                {progress === 100 ? 'Journey Completed Successfully!' : `Step ${workflow.currentStepId} of 12: ${currentStep?.title}`}
+                {progress === 100 ? 'Journey Completed Successfully!' : `Step ${workflow.currentStepId} of 13: ${currentStep?.title}`}
               </CardDescription>
             </CardHeader>
             <CardContent>
@@ -164,6 +167,47 @@ export default function IncorporationDashboard() {
             </CardContent>
           </Card>
 
+          {/* Compliance Deadlines Section */}
+          {stats.deadlines && stats.deadlines.length > 0 && (
+            <Card className='border-none shadow-lg bg-white overflow-hidden'>
+              <CardHeader className='pb-3'>
+                <CardTitle className='text-md flex items-center gap-2'>
+                  <Clock className='h-4 w-4 text-primary' />
+                  Statutory Compliance Deadlines
+                </CardTitle>
+              </CardHeader>
+              <CardContent>
+                <div className='space-y-3'>
+                  {stats.deadlines.map((d: any, idx: number) => (
+                    <div key={idx} className='flex items-center justify-between p-3 rounded-lg border bg-slate-50/50'>
+                      <div className='flex items-center gap-3'>
+                        <div className={`p-2 rounded-full ${
+                          d.status === 'red' ? 'bg-red-100 text-red-600' : 
+                          d.status === 'amber' ? 'bg-amber-100 text-amber-600' : 'bg-green-100 text-green-600'
+                        }`}>
+                          <Clock className='h-4 w-4' />
+                        </div>
+                        <div>
+                          <p className='text-sm font-semibold'>{d.task}</p>
+                          <p className='text-[10px] text-muted-foreground'>{d.section} | Within {d.days_limit} days of COI</p>
+                        </div>
+                      </div>
+                      <div className='text-right'>
+                        <p className={`text-sm font-bold ${
+                          d.status === 'red' ? 'text-red-600' : 
+                          d.status === 'amber' ? 'text-amber-600' : 'text-green-600'
+                        }`}>
+                          {d.remaining_days <= 0 ? 'Overdue!' : `${d.remaining_days} days left`}
+                        </p>
+                        <p className='text-[10px] text-muted-foreground'>Deadline: {new Date(d.deadline).toLocaleDateString()}</p>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </CardContent>
+            </Card>
+          )}
+
           {/* Active Step Details */}
           <Card className='border-primary/20 shadow-lg'>
             <CardHeader className='pb-2'>
@@ -180,7 +224,7 @@ export default function IncorporationDashboard() {
                 <Button 
                   size='sm' 
                   className='rounded-full'
-                  onClick={() => handleStepClick(workflow.currentStepId > 11 ? 1 : workflow.currentStepId)}
+                  onClick={() => handleStepClick(workflow.currentStepId > 12 ? 1 : workflow.currentStepId)}
                 >
                   {progress === 100 ? 'View Summary' : 'Open Submission Form'} <ArrowRight className='ml-2 h-4 w-4' />
                 </Button>
@@ -197,7 +241,7 @@ export default function IncorporationDashboard() {
           <Card className='h-full border-none shadow-xl bg-card/50 backdrop-blur-sm'>
             <CardHeader>
               <CardTitle className='text-lg'>Workflow Timeline</CardTitle>
-              <CardDescription>12 Steps to Incorporation</CardDescription>
+              <CardDescription>13 Steps to Incorporation</CardDescription>
             </CardHeader>
             <CardContent className='max-h-[600px] overflow-y-auto pr-2 custom-scrollbar'>
               <WorkflowStepper 

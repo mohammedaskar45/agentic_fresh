@@ -86,8 +86,8 @@ export function UploadGate({ stepId, docTitle, onVerified }: UploadGateProps) {
                status === 'verifying' ? <Loader2 className='h-6 w-6 animate-spin' /> : <FileText className='h-6 w-6' />}
             </div>
             <div>
-              <h4 className='font-bold text-slate-800'>Step 11 Gateway: Statutory Upload</h4>
-              <p className='text-xs text-muted-foreground'>Upload the signed {docTitle} to unlock the next phase.</p>
+              <h4 className='font-bold text-slate-800'>Step {stepId} Gateway: Statutory Upload</h4>
+              <p className='text-xs text-muted-foreground'>Upload the signed {docTitle} to complete this phase.</p>
             </div>
           </div>
 

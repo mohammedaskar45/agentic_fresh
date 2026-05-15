@@ -35,7 +35,17 @@ import { Route as AuthenticatedErrorsErrorRouteImport } from './routes/_authenti
 import { Route as AuthenticatedAdminIdentityUsersRouteImport } from './routes/_authenticated/admin/identity/users'
 import { Route as AuthenticatedAdminIdentityRolesRouteImport } from './routes/_authenticated/admin/identity/roles'
 import { Route as AuthenticatedAdminIdentityMatrixRouteImport } from './routes/_authenticated/admin/identity/matrix'
+import { Route as AuthenticatedAdminComplianceRightsIssueIndexRouteImport } from './routes/_authenticated/admin/compliance/rights-issue/index'
 import { Route as AuthenticatedAdminComplianceIncorporationIndexRouteImport } from './routes/_authenticated/admin/compliance/incorporation/index'
+import { Route as AuthenticatedAdminComplianceRightsIssuePreOfferRouteImport } from './routes/_authenticated/admin/compliance/rights-issue/pre-offer'
+import { Route as AuthenticatedAdminComplianceRightsIssueOfferPeriodRouteImport } from './routes/_authenticated/admin/compliance/rights-issue/offer-period'
+import { Route as AuthenticatedAdminComplianceRightsIssueMasterDataRouteImport } from './routes/_authenticated/admin/compliance/rights-issue/master-data'
+import { Route as AuthenticatedAdminComplianceRightsIssueListedRecordDateRouteImport } from './routes/_authenticated/admin/compliance/rights-issue/listed-record-date'
+import { Route as AuthenticatedAdminComplianceRightsIssueListedDlofRouteImport } from './routes/_authenticated/admin/compliance/rights-issue/listed-dlof'
+import { Route as AuthenticatedAdminComplianceRightsIssueListedAppointmentRouteImport } from './routes/_authenticated/admin/compliance/rights-issue/listed-appointment'
+import { Route as AuthenticatedAdminComplianceRightsIssueEligibilityRouteImport } from './routes/_authenticated/admin/compliance/rights-issue/eligibility'
+import { Route as AuthenticatedAdminComplianceRightsIssueBoardApprovalRouteImport } from './routes/_authenticated/admin/compliance/rights-issue/board-approval'
+import { Route as AuthenticatedAdminComplianceRightsIssueAllotmentRouteImport } from './routes/_authenticated/admin/compliance/rights-issue/allotment'
 import { Route as AuthenticatedAdminComplianceIncorporationSpiceRouteImport } from './routes/_authenticated/admin/compliance/incorporation/spice'
 import { Route as AuthenticatedAdminComplianceIncorporationRunRouteImport } from './routes/_authenticated/admin/compliance/incorporation/run'
 import { Route as AuthenticatedAdminComplianceIncorporationPanTanRouteImport } from './routes/_authenticated/admin/compliance/incorporation/pan-tan'
@@ -48,6 +58,7 @@ import { Route as AuthenticatedAdminComplianceIncorporationDinRouteImport } from
 import { Route as AuthenticatedAdminComplianceIncorporationCommencementRouteImport } from './routes/_authenticated/admin/compliance/incorporation/commencement'
 import { Route as AuthenticatedAdminComplianceIncorporationCoiRouteImport } from './routes/_authenticated/admin/compliance/incorporation/coi'
 import { Route as AuthenticatedAdminComplianceIncorporationBankRouteImport } from './routes/_authenticated/admin/compliance/incorporation/bank'
+import { Route as AuthenticatedAdminComplianceIncorporationAuditorRouteImport } from './routes/_authenticated/admin/compliance/incorporation/auditor'
 
 const AuthenticatedRouteRoute = AuthenticatedRouteRouteImport.update({
   id: '/_authenticated',
@@ -189,10 +200,70 @@ const AuthenticatedAdminIdentityMatrixRoute =
     path: '/admin/identity/matrix',
     getParentRoute: () => AuthenticatedRouteRoute,
   } as any)
+const AuthenticatedAdminComplianceRightsIssueIndexRoute =
+  AuthenticatedAdminComplianceRightsIssueIndexRouteImport.update({
+    id: '/admin/compliance/rights-issue/',
+    path: '/admin/compliance/rights-issue/',
+    getParentRoute: () => AuthenticatedRouteRoute,
+  } as any)
 const AuthenticatedAdminComplianceIncorporationIndexRoute =
   AuthenticatedAdminComplianceIncorporationIndexRouteImport.update({
     id: '/admin/compliance/incorporation/',
     path: '/admin/compliance/incorporation/',
+    getParentRoute: () => AuthenticatedRouteRoute,
+  } as any)
+const AuthenticatedAdminComplianceRightsIssuePreOfferRoute =
+  AuthenticatedAdminComplianceRightsIssuePreOfferRouteImport.update({
+    id: '/admin/compliance/rights-issue/pre-offer',
+    path: '/admin/compliance/rights-issue/pre-offer',
+    getParentRoute: () => AuthenticatedRouteRoute,
+  } as any)
+const AuthenticatedAdminComplianceRightsIssueOfferPeriodRoute =
+  AuthenticatedAdminComplianceRightsIssueOfferPeriodRouteImport.update({
+    id: '/admin/compliance/rights-issue/offer-period',
+    path: '/admin/compliance/rights-issue/offer-period',
+    getParentRoute: () => AuthenticatedRouteRoute,
+  } as any)
+const AuthenticatedAdminComplianceRightsIssueMasterDataRoute =
+  AuthenticatedAdminComplianceRightsIssueMasterDataRouteImport.update({
+    id: '/admin/compliance/rights-issue/master-data',
+    path: '/admin/compliance/rights-issue/master-data',
+    getParentRoute: () => AuthenticatedRouteRoute,
+  } as any)
+const AuthenticatedAdminComplianceRightsIssueListedRecordDateRoute =
+  AuthenticatedAdminComplianceRightsIssueListedRecordDateRouteImport.update({
+    id: '/admin/compliance/rights-issue/listed-record-date',
+    path: '/admin/compliance/rights-issue/listed-record-date',
+    getParentRoute: () => AuthenticatedRouteRoute,
+  } as any)
+const AuthenticatedAdminComplianceRightsIssueListedDlofRoute =
+  AuthenticatedAdminComplianceRightsIssueListedDlofRouteImport.update({
+    id: '/admin/compliance/rights-issue/listed-dlof',
+    path: '/admin/compliance/rights-issue/listed-dlof',
+    getParentRoute: () => AuthenticatedRouteRoute,
+  } as any)
+const AuthenticatedAdminComplianceRightsIssueListedAppointmentRoute =
+  AuthenticatedAdminComplianceRightsIssueListedAppointmentRouteImport.update({
+    id: '/admin/compliance/rights-issue/listed-appointment',
+    path: '/admin/compliance/rights-issue/listed-appointment',
+    getParentRoute: () => AuthenticatedRouteRoute,
+  } as any)
+const AuthenticatedAdminComplianceRightsIssueEligibilityRoute =
+  AuthenticatedAdminComplianceRightsIssueEligibilityRouteImport.update({
+    id: '/admin/compliance/rights-issue/eligibility',
+    path: '/admin/compliance/rights-issue/eligibility',
+    getParentRoute: () => AuthenticatedRouteRoute,
+  } as any)
+const AuthenticatedAdminComplianceRightsIssueBoardApprovalRoute =
+  AuthenticatedAdminComplianceRightsIssueBoardApprovalRouteImport.update({
+    id: '/admin/compliance/rights-issue/board-approval',
+    path: '/admin/compliance/rights-issue/board-approval',
+    getParentRoute: () => AuthenticatedRouteRoute,
+  } as any)
+const AuthenticatedAdminComplianceRightsIssueAllotmentRoute =
+  AuthenticatedAdminComplianceRightsIssueAllotmentRouteImport.update({
+    id: '/admin/compliance/rights-issue/allotment',
+    path: '/admin/compliance/rights-issue/allotment',
     getParentRoute: () => AuthenticatedRouteRoute,
   } as any)
 const AuthenticatedAdminComplianceIncorporationSpiceRoute =
@@ -267,6 +338,12 @@ const AuthenticatedAdminComplianceIncorporationBankRoute =
     path: '/admin/compliance/incorporation/bank',
     getParentRoute: () => AuthenticatedRouteRoute,
   } as any)
+const AuthenticatedAdminComplianceIncorporationAuditorRoute =
+  AuthenticatedAdminComplianceIncorporationAuditorRouteImport.update({
+    id: '/admin/compliance/incorporation/auditor',
+    path: '/admin/compliance/incorporation/auditor',
+    getParentRoute: () => AuthenticatedRouteRoute,
+  } as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof AuthenticatedIndexRoute
@@ -294,6 +371,7 @@ export interface FileRoutesByFullPath {
   '/admin/identity/matrix': typeof AuthenticatedAdminIdentityMatrixRoute
   '/admin/identity/roles': typeof AuthenticatedAdminIdentityRolesRoute
   '/admin/identity/users': typeof AuthenticatedAdminIdentityUsersRoute
+  '/admin/compliance/incorporation/auditor': typeof AuthenticatedAdminComplianceIncorporationAuditorRoute
   '/admin/compliance/incorporation/bank': typeof AuthenticatedAdminComplianceIncorporationBankRoute
   '/admin/compliance/incorporation/coi': typeof AuthenticatedAdminComplianceIncorporationCoiRoute
   '/admin/compliance/incorporation/commencement': typeof AuthenticatedAdminComplianceIncorporationCommencementRoute
@@ -306,7 +384,17 @@ export interface FileRoutesByFullPath {
   '/admin/compliance/incorporation/pan-tan': typeof AuthenticatedAdminComplianceIncorporationPanTanRoute
   '/admin/compliance/incorporation/run': typeof AuthenticatedAdminComplianceIncorporationRunRoute
   '/admin/compliance/incorporation/spice': typeof AuthenticatedAdminComplianceIncorporationSpiceRoute
+  '/admin/compliance/rights-issue/allotment': typeof AuthenticatedAdminComplianceRightsIssueAllotmentRoute
+  '/admin/compliance/rights-issue/board-approval': typeof AuthenticatedAdminComplianceRightsIssueBoardApprovalRoute
+  '/admin/compliance/rights-issue/eligibility': typeof AuthenticatedAdminComplianceRightsIssueEligibilityRoute
+  '/admin/compliance/rights-issue/listed-appointment': typeof AuthenticatedAdminComplianceRightsIssueListedAppointmentRoute
+  '/admin/compliance/rights-issue/listed-dlof': typeof AuthenticatedAdminComplianceRightsIssueListedDlofRoute
+  '/admin/compliance/rights-issue/listed-record-date': typeof AuthenticatedAdminComplianceRightsIssueListedRecordDateRoute
+  '/admin/compliance/rights-issue/master-data': typeof AuthenticatedAdminComplianceRightsIssueMasterDataRoute
+  '/admin/compliance/rights-issue/offer-period': typeof AuthenticatedAdminComplianceRightsIssueOfferPeriodRoute
+  '/admin/compliance/rights-issue/pre-offer': typeof AuthenticatedAdminComplianceRightsIssuePreOfferRoute
   '/admin/compliance/incorporation/': typeof AuthenticatedAdminComplianceIncorporationIndexRoute
+  '/admin/compliance/rights-issue/': typeof AuthenticatedAdminComplianceRightsIssueIndexRoute
 }
 export interface FileRoutesByTo {
   '/forgot-password': typeof authForgotPasswordRoute
@@ -333,6 +421,7 @@ export interface FileRoutesByTo {
   '/admin/identity/matrix': typeof AuthenticatedAdminIdentityMatrixRoute
   '/admin/identity/roles': typeof AuthenticatedAdminIdentityRolesRoute
   '/admin/identity/users': typeof AuthenticatedAdminIdentityUsersRoute
+  '/admin/compliance/incorporation/auditor': typeof AuthenticatedAdminComplianceIncorporationAuditorRoute
   '/admin/compliance/incorporation/bank': typeof AuthenticatedAdminComplianceIncorporationBankRoute
   '/admin/compliance/incorporation/coi': typeof AuthenticatedAdminComplianceIncorporationCoiRoute
   '/admin/compliance/incorporation/commencement': typeof AuthenticatedAdminComplianceIncorporationCommencementRoute
@@ -345,7 +434,17 @@ export interface FileRoutesByTo {
   '/admin/compliance/incorporation/pan-tan': typeof AuthenticatedAdminComplianceIncorporationPanTanRoute
   '/admin/compliance/incorporation/run': typeof AuthenticatedAdminComplianceIncorporationRunRoute
   '/admin/compliance/incorporation/spice': typeof AuthenticatedAdminComplianceIncorporationSpiceRoute
+  '/admin/compliance/rights-issue/allotment': typeof AuthenticatedAdminComplianceRightsIssueAllotmentRoute
+  '/admin/compliance/rights-issue/board-approval': typeof AuthenticatedAdminComplianceRightsIssueBoardApprovalRoute
+  '/admin/compliance/rights-issue/eligibility': typeof AuthenticatedAdminComplianceRightsIssueEligibilityRoute
+  '/admin/compliance/rights-issue/listed-appointment': typeof AuthenticatedAdminComplianceRightsIssueListedAppointmentRoute
+  '/admin/compliance/rights-issue/listed-dlof': typeof AuthenticatedAdminComplianceRightsIssueListedDlofRoute
+  '/admin/compliance/rights-issue/listed-record-date': typeof AuthenticatedAdminComplianceRightsIssueListedRecordDateRoute
+  '/admin/compliance/rights-issue/master-data': typeof AuthenticatedAdminComplianceRightsIssueMasterDataRoute
+  '/admin/compliance/rights-issue/offer-period': typeof AuthenticatedAdminComplianceRightsIssueOfferPeriodRoute
+  '/admin/compliance/rights-issue/pre-offer': typeof AuthenticatedAdminComplianceRightsIssuePreOfferRoute
   '/admin/compliance/incorporation': typeof AuthenticatedAdminComplianceIncorporationIndexRoute
+  '/admin/compliance/rights-issue': typeof AuthenticatedAdminComplianceRightsIssueIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -375,6 +474,7 @@ export interface FileRoutesById {
   '/_authenticated/admin/identity/matrix': typeof AuthenticatedAdminIdentityMatrixRoute
   '/_authenticated/admin/identity/roles': typeof AuthenticatedAdminIdentityRolesRoute
   '/_authenticated/admin/identity/users': typeof AuthenticatedAdminIdentityUsersRoute
+  '/_authenticated/admin/compliance/incorporation/auditor': typeof AuthenticatedAdminComplianceIncorporationAuditorRoute
   '/_authenticated/admin/compliance/incorporation/bank': typeof AuthenticatedAdminComplianceIncorporationBankRoute
   '/_authenticated/admin/compliance/incorporation/coi': typeof AuthenticatedAdminComplianceIncorporationCoiRoute
   '/_authenticated/admin/compliance/incorporation/commencement': typeof AuthenticatedAdminComplianceIncorporationCommencementRoute
@@ -387,7 +487,17 @@ export interface FileRoutesById {
   '/_authenticated/admin/compliance/incorporation/pan-tan': typeof AuthenticatedAdminComplianceIncorporationPanTanRoute
   '/_authenticated/admin/compliance/incorporation/run': typeof AuthenticatedAdminComplianceIncorporationRunRoute
   '/_authenticated/admin/compliance/incorporation/spice': typeof AuthenticatedAdminComplianceIncorporationSpiceRoute
+  '/_authenticated/admin/compliance/rights-issue/allotment': typeof AuthenticatedAdminComplianceRightsIssueAllotmentRoute
+  '/_authenticated/admin/compliance/rights-issue/board-approval': typeof AuthenticatedAdminComplianceRightsIssueBoardApprovalRoute
+  '/_authenticated/admin/compliance/rights-issue/eligibility': typeof AuthenticatedAdminComplianceRightsIssueEligibilityRoute
+  '/_authenticated/admin/compliance/rights-issue/listed-appointment': typeof AuthenticatedAdminComplianceRightsIssueListedAppointmentRoute
+  '/_authenticated/admin/compliance/rights-issue/listed-dlof': typeof AuthenticatedAdminComplianceRightsIssueListedDlofRoute
+  '/_authenticated/admin/compliance/rights-issue/listed-record-date': typeof AuthenticatedAdminComplianceRightsIssueListedRecordDateRoute
+  '/_authenticated/admin/compliance/rights-issue/master-data': typeof AuthenticatedAdminComplianceRightsIssueMasterDataRoute
+  '/_authenticated/admin/compliance/rights-issue/offer-period': typeof AuthenticatedAdminComplianceRightsIssueOfferPeriodRoute
+  '/_authenticated/admin/compliance/rights-issue/pre-offer': typeof AuthenticatedAdminComplianceRightsIssuePreOfferRoute
   '/_authenticated/admin/compliance/incorporation/': typeof AuthenticatedAdminComplianceIncorporationIndexRoute
+  '/_authenticated/admin/compliance/rights-issue/': typeof AuthenticatedAdminComplianceRightsIssueIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -417,6 +527,7 @@ export interface FileRouteTypes {
     | '/admin/identity/matrix'
     | '/admin/identity/roles'
     | '/admin/identity/users'
+    | '/admin/compliance/incorporation/auditor'
     | '/admin/compliance/incorporation/bank'
     | '/admin/compliance/incorporation/coi'
     | '/admin/compliance/incorporation/commencement'
@@ -429,7 +540,17 @@ export interface FileRouteTypes {
     | '/admin/compliance/incorporation/pan-tan'
     | '/admin/compliance/incorporation/run'
     | '/admin/compliance/incorporation/spice'
+    | '/admin/compliance/rights-issue/allotment'
+    | '/admin/compliance/rights-issue/board-approval'
+    | '/admin/compliance/rights-issue/eligibility'
+    | '/admin/compliance/rights-issue/listed-appointment'
+    | '/admin/compliance/rights-issue/listed-dlof'
+    | '/admin/compliance/rights-issue/listed-record-date'
+    | '/admin/compliance/rights-issue/master-data'
+    | '/admin/compliance/rights-issue/offer-period'
+    | '/admin/compliance/rights-issue/pre-offer'
     | '/admin/compliance/incorporation/'
+    | '/admin/compliance/rights-issue/'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/forgot-password'
@@ -456,6 +577,7 @@ export interface FileRouteTypes {
     | '/admin/identity/matrix'
     | '/admin/identity/roles'
     | '/admin/identity/users'
+    | '/admin/compliance/incorporation/auditor'
     | '/admin/compliance/incorporation/bank'
     | '/admin/compliance/incorporation/coi'
     | '/admin/compliance/incorporation/commencement'
@@ -468,7 +590,17 @@ export interface FileRouteTypes {
     | '/admin/compliance/incorporation/pan-tan'
     | '/admin/compliance/incorporation/run'
     | '/admin/compliance/incorporation/spice'
+    | '/admin/compliance/rights-issue/allotment'
+    | '/admin/compliance/rights-issue/board-approval'
+    | '/admin/compliance/rights-issue/eligibility'
+    | '/admin/compliance/rights-issue/listed-appointment'
+    | '/admin/compliance/rights-issue/listed-dlof'
+    | '/admin/compliance/rights-issue/listed-record-date'
+    | '/admin/compliance/rights-issue/master-data'
+    | '/admin/compliance/rights-issue/offer-period'
+    | '/admin/compliance/rights-issue/pre-offer'
     | '/admin/compliance/incorporation'
+    | '/admin/compliance/rights-issue'
   id:
     | '__root__'
     | '/_authenticated'
@@ -497,6 +629,7 @@ export interface FileRouteTypes {
     | '/_authenticated/admin/identity/matrix'
     | '/_authenticated/admin/identity/roles'
     | '/_authenticated/admin/identity/users'
+    | '/_authenticated/admin/compliance/incorporation/auditor'
     | '/_authenticated/admin/compliance/incorporation/bank'
     | '/_authenticated/admin/compliance/incorporation/coi'
     | '/_authenticated/admin/compliance/incorporation/commencement'
@@ -509,7 +642,17 @@ export interface FileRouteTypes {
     | '/_authenticated/admin/compliance/incorporation/pan-tan'
     | '/_authenticated/admin/compliance/incorporation/run'
     | '/_authenticated/admin/compliance/incorporation/spice'
+    | '/_authenticated/admin/compliance/rights-issue/allotment'
+    | '/_authenticated/admin/compliance/rights-issue/board-approval'
+    | '/_authenticated/admin/compliance/rights-issue/eligibility'
+    | '/_authenticated/admin/compliance/rights-issue/listed-appointment'
+    | '/_authenticated/admin/compliance/rights-issue/listed-dlof'
+    | '/_authenticated/admin/compliance/rights-issue/listed-record-date'
+    | '/_authenticated/admin/compliance/rights-issue/master-data'
+    | '/_authenticated/admin/compliance/rights-issue/offer-period'
+    | '/_authenticated/admin/compliance/rights-issue/pre-offer'
     | '/_authenticated/admin/compliance/incorporation/'
+    | '/_authenticated/admin/compliance/rights-issue/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -711,11 +854,81 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedAdminIdentityMatrixRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
+    '/_authenticated/admin/compliance/rights-issue/': {
+      id: '/_authenticated/admin/compliance/rights-issue/'
+      path: '/admin/compliance/rights-issue'
+      fullPath: '/admin/compliance/rights-issue/'
+      preLoaderRoute: typeof AuthenticatedAdminComplianceRightsIssueIndexRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
     '/_authenticated/admin/compliance/incorporation/': {
       id: '/_authenticated/admin/compliance/incorporation/'
       path: '/admin/compliance/incorporation'
       fullPath: '/admin/compliance/incorporation/'
       preLoaderRoute: typeof AuthenticatedAdminComplianceIncorporationIndexRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/admin/compliance/rights-issue/pre-offer': {
+      id: '/_authenticated/admin/compliance/rights-issue/pre-offer'
+      path: '/admin/compliance/rights-issue/pre-offer'
+      fullPath: '/admin/compliance/rights-issue/pre-offer'
+      preLoaderRoute: typeof AuthenticatedAdminComplianceRightsIssuePreOfferRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/admin/compliance/rights-issue/offer-period': {
+      id: '/_authenticated/admin/compliance/rights-issue/offer-period'
+      path: '/admin/compliance/rights-issue/offer-period'
+      fullPath: '/admin/compliance/rights-issue/offer-period'
+      preLoaderRoute: typeof AuthenticatedAdminComplianceRightsIssueOfferPeriodRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/admin/compliance/rights-issue/master-data': {
+      id: '/_authenticated/admin/compliance/rights-issue/master-data'
+      path: '/admin/compliance/rights-issue/master-data'
+      fullPath: '/admin/compliance/rights-issue/master-data'
+      preLoaderRoute: typeof AuthenticatedAdminComplianceRightsIssueMasterDataRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/admin/compliance/rights-issue/listed-record-date': {
+      id: '/_authenticated/admin/compliance/rights-issue/listed-record-date'
+      path: '/admin/compliance/rights-issue/listed-record-date'
+      fullPath: '/admin/compliance/rights-issue/listed-record-date'
+      preLoaderRoute: typeof AuthenticatedAdminComplianceRightsIssueListedRecordDateRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/admin/compliance/rights-issue/listed-dlof': {
+      id: '/_authenticated/admin/compliance/rights-issue/listed-dlof'
+      path: '/admin/compliance/rights-issue/listed-dlof'
+      fullPath: '/admin/compliance/rights-issue/listed-dlof'
+      preLoaderRoute: typeof AuthenticatedAdminComplianceRightsIssueListedDlofRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/admin/compliance/rights-issue/listed-appointment': {
+      id: '/_authenticated/admin/compliance/rights-issue/listed-appointment'
+      path: '/admin/compliance/rights-issue/listed-appointment'
+      fullPath: '/admin/compliance/rights-issue/listed-appointment'
+      preLoaderRoute: typeof AuthenticatedAdminComplianceRightsIssueListedAppointmentRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/admin/compliance/rights-issue/eligibility': {
+      id: '/_authenticated/admin/compliance/rights-issue/eligibility'
+      path: '/admin/compliance/rights-issue/eligibility'
+      fullPath: '/admin/compliance/rights-issue/eligibility'
+      preLoaderRoute: typeof AuthenticatedAdminComplianceRightsIssueEligibilityRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/admin/compliance/rights-issue/board-approval': {
+      id: '/_authenticated/admin/compliance/rights-issue/board-approval'
+      path: '/admin/compliance/rights-issue/board-approval'
+      fullPath: '/admin/compliance/rights-issue/board-approval'
+      preLoaderRoute: typeof AuthenticatedAdminComplianceRightsIssueBoardApprovalRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/admin/compliance/rights-issue/allotment': {
+      id: '/_authenticated/admin/compliance/rights-issue/allotment'
+      path: '/admin/compliance/rights-issue/allotment'
+      fullPath: '/admin/compliance/rights-issue/allotment'
+      preLoaderRoute: typeof AuthenticatedAdminComplianceRightsIssueAllotmentRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
     '/_authenticated/admin/compliance/incorporation/spice': {
@@ -802,6 +1015,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedAdminComplianceIncorporationBankRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
+    '/_authenticated/admin/compliance/incorporation/auditor': {
+      id: '/_authenticated/admin/compliance/incorporation/auditor'
+      path: '/admin/compliance/incorporation/auditor'
+      fullPath: '/admin/compliance/incorporation/auditor'
+      preLoaderRoute: typeof AuthenticatedAdminComplianceIncorporationAuditorRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
   }
 }
 
@@ -838,6 +1058,7 @@ interface AuthenticatedRouteRouteChildren {
   AuthenticatedAdminIdentityMatrixRoute: typeof AuthenticatedAdminIdentityMatrixRoute
   AuthenticatedAdminIdentityRolesRoute: typeof AuthenticatedAdminIdentityRolesRoute
   AuthenticatedAdminIdentityUsersRoute: typeof AuthenticatedAdminIdentityUsersRoute
+  AuthenticatedAdminComplianceIncorporationAuditorRoute: typeof AuthenticatedAdminComplianceIncorporationAuditorRoute
   AuthenticatedAdminComplianceIncorporationBankRoute: typeof AuthenticatedAdminComplianceIncorporationBankRoute
   AuthenticatedAdminComplianceIncorporationCoiRoute: typeof AuthenticatedAdminComplianceIncorporationCoiRoute
   AuthenticatedAdminComplianceIncorporationCommencementRoute: typeof AuthenticatedAdminComplianceIncorporationCommencementRoute
@@ -850,7 +1071,17 @@ interface AuthenticatedRouteRouteChildren {
   AuthenticatedAdminComplianceIncorporationPanTanRoute: typeof AuthenticatedAdminComplianceIncorporationPanTanRoute
   AuthenticatedAdminComplianceIncorporationRunRoute: typeof AuthenticatedAdminComplianceIncorporationRunRoute
   AuthenticatedAdminComplianceIncorporationSpiceRoute: typeof AuthenticatedAdminComplianceIncorporationSpiceRoute
+  AuthenticatedAdminComplianceRightsIssueAllotmentRoute: typeof AuthenticatedAdminComplianceRightsIssueAllotmentRoute
+  AuthenticatedAdminComplianceRightsIssueBoardApprovalRoute: typeof AuthenticatedAdminComplianceRightsIssueBoardApprovalRoute
+  AuthenticatedAdminComplianceRightsIssueEligibilityRoute: typeof AuthenticatedAdminComplianceRightsIssueEligibilityRoute
+  AuthenticatedAdminComplianceRightsIssueListedAppointmentRoute: typeof AuthenticatedAdminComplianceRightsIssueListedAppointmentRoute
+  AuthenticatedAdminComplianceRightsIssueListedDlofRoute: typeof AuthenticatedAdminComplianceRightsIssueListedDlofRoute
+  AuthenticatedAdminComplianceRightsIssueListedRecordDateRoute: typeof AuthenticatedAdminComplianceRightsIssueListedRecordDateRoute
+  AuthenticatedAdminComplianceRightsIssueMasterDataRoute: typeof AuthenticatedAdminComplianceRightsIssueMasterDataRoute
+  AuthenticatedAdminComplianceRightsIssueOfferPeriodRoute: typeof AuthenticatedAdminComplianceRightsIssueOfferPeriodRoute
+  AuthenticatedAdminComplianceRightsIssuePreOfferRoute: typeof AuthenticatedAdminComplianceRightsIssuePreOfferRoute
   AuthenticatedAdminComplianceIncorporationIndexRoute: typeof AuthenticatedAdminComplianceIncorporationIndexRoute
+  AuthenticatedAdminComplianceRightsIssueIndexRoute: typeof AuthenticatedAdminComplianceRightsIssueIndexRoute
 }
 
 const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
@@ -863,6 +1094,8 @@ const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
   AuthenticatedAdminIdentityMatrixRoute: AuthenticatedAdminIdentityMatrixRoute,
   AuthenticatedAdminIdentityRolesRoute: AuthenticatedAdminIdentityRolesRoute,
   AuthenticatedAdminIdentityUsersRoute: AuthenticatedAdminIdentityUsersRoute,
+  AuthenticatedAdminComplianceIncorporationAuditorRoute:
+    AuthenticatedAdminComplianceIncorporationAuditorRoute,
   AuthenticatedAdminComplianceIncorporationBankRoute:
     AuthenticatedAdminComplianceIncorporationBankRoute,
   AuthenticatedAdminComplianceIncorporationCoiRoute:
@@ -887,8 +1120,28 @@ const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
     AuthenticatedAdminComplianceIncorporationRunRoute,
   AuthenticatedAdminComplianceIncorporationSpiceRoute:
     AuthenticatedAdminComplianceIncorporationSpiceRoute,
+  AuthenticatedAdminComplianceRightsIssueAllotmentRoute:
+    AuthenticatedAdminComplianceRightsIssueAllotmentRoute,
+  AuthenticatedAdminComplianceRightsIssueBoardApprovalRoute:
+    AuthenticatedAdminComplianceRightsIssueBoardApprovalRoute,
+  AuthenticatedAdminComplianceRightsIssueEligibilityRoute:
+    AuthenticatedAdminComplianceRightsIssueEligibilityRoute,
+  AuthenticatedAdminComplianceRightsIssueListedAppointmentRoute:
+    AuthenticatedAdminComplianceRightsIssueListedAppointmentRoute,
+  AuthenticatedAdminComplianceRightsIssueListedDlofRoute:
+    AuthenticatedAdminComplianceRightsIssueListedDlofRoute,
+  AuthenticatedAdminComplianceRightsIssueListedRecordDateRoute:
+    AuthenticatedAdminComplianceRightsIssueListedRecordDateRoute,
+  AuthenticatedAdminComplianceRightsIssueMasterDataRoute:
+    AuthenticatedAdminComplianceRightsIssueMasterDataRoute,
+  AuthenticatedAdminComplianceRightsIssueOfferPeriodRoute:
+    AuthenticatedAdminComplianceRightsIssueOfferPeriodRoute,
+  AuthenticatedAdminComplianceRightsIssuePreOfferRoute:
+    AuthenticatedAdminComplianceRightsIssuePreOfferRoute,
   AuthenticatedAdminComplianceIncorporationIndexRoute:
     AuthenticatedAdminComplianceIncorporationIndexRoute,
+  AuthenticatedAdminComplianceRightsIssueIndexRoute:
+    AuthenticatedAdminComplianceRightsIssueIndexRoute,
 }
 
 const AuthenticatedRouteRouteWithChildren =

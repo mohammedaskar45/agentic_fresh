@@ -1,27 +1,30 @@
 import { create } from 'zustand'
 import { persist, createJSONStorage } from 'zustand/middleware'
 
-interface WorkflowStep {
+interface RIStep {
   id: number
+  title: string
   status: 'completed' | 'current' | 'upcoming'
 }
 
-interface WorkflowState {
+interface RIState {
   currentStepId: number
-  steps: WorkflowStep[]
+  steps: RIStep[]
+  companyType: 'PRIVATE' | 'LISTED'
+  setCompanyType: (type: 'PRIVATE' | 'LISTED') => void
   completeStep: (stepId: number) => void
   setCurrentStep: (stepId: number) => void
+  setSteps: (steps: RIStep[]) => void
   reset: () => void
 }
 
-export const useWorkflowStore = create<WorkflowState>()(
+export const useRightsIssueStore = create<RIState>()(
   persist(
     (set) => ({
       currentStepId: 0,
-      steps: Array.from({ length: 13 }, (_, i) => ({
-        id: i,
-        status: i === 0 ? 'current' : 'upcoming',
-      })),
+      companyType: 'PRIVATE',
+      steps: [],
+      setCompanyType: (companyType) => set({ companyType }),
       completeStep: (stepId) =>
         set((state) => {
           const updatedSteps = state.steps.map((step) => {
@@ -38,17 +41,16 @@ export const useWorkflowStore = create<WorkflowState>()(
         set(() => ({
           currentStepId: stepId,
         })),
+      setSteps: (steps) => set({ steps }),
       reset: () =>
         set(() => ({
           currentStepId: 0,
-          steps: Array.from({ length: 13 }, (_, i) => ({
-            id: i,
-            status: i === 0 ? 'current' : 'upcoming',
-          })),
+          companyType: 'PRIVATE',
+          steps: [],
         })),
     }),
     {
-      name: 'incorporation-workflow-v3',
+      name: 'rights-issue-workflow-v1',
       storage: createJSONStorage(() => localStorage),
     }
   )
