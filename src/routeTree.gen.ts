@@ -32,6 +32,7 @@ import { Route as AuthenticatedSettingsDisplayRouteImport } from './routes/_auth
 import { Route as AuthenticatedSettingsAppearanceRouteImport } from './routes/_authenticated/settings/appearance'
 import { Route as AuthenticatedSettingsAccountRouteImport } from './routes/_authenticated/settings/account'
 import { Route as AuthenticatedErrorsErrorRouteImport } from './routes/_authenticated/errors/$error'
+import { Route as AuthenticatedAdminVaultRouteImport } from './routes/_authenticated/admin/vault'
 import { Route as AuthenticatedAdminIdentityUsersRouteImport } from './routes/_authenticated/admin/identity/users'
 import { Route as AuthenticatedAdminIdentityRolesRouteImport } from './routes/_authenticated/admin/identity/roles'
 import { Route as AuthenticatedAdminIdentityMatrixRouteImport } from './routes/_authenticated/admin/identity/matrix'
@@ -58,6 +59,7 @@ import { Route as AuthenticatedAdminComplianceIncorporationDscRouteImport } from
 import { Route as AuthenticatedAdminComplianceIncorporationDinRouteImport } from './routes/_authenticated/admin/compliance/incorporation/din'
 import { Route as AuthenticatedAdminComplianceIncorporationCommencementRouteImport } from './routes/_authenticated/admin/compliance/incorporation/commencement'
 import { Route as AuthenticatedAdminComplianceIncorporationCoiRouteImport } from './routes/_authenticated/admin/compliance/incorporation/coi'
+import { Route as AuthenticatedAdminComplianceIncorporationBoardMeetingRouteImport } from './routes/_authenticated/admin/compliance/incorporation/board-meeting'
 import { Route as AuthenticatedAdminComplianceIncorporationBankRouteImport } from './routes/_authenticated/admin/compliance/incorporation/bank'
 import { Route as AuthenticatedAdminComplianceIncorporationAuditorRouteImport } from './routes/_authenticated/admin/compliance/incorporation/auditor'
 import { Route as AuthenticatedAdminComplianceBuybackMasterDataRouteImport } from './routes/_authenticated/admin/compliance/buyback/master-data'
@@ -185,6 +187,11 @@ const AuthenticatedErrorsErrorRoute =
     path: '/errors/$error',
     getParentRoute: () => AuthenticatedRouteRoute,
   } as any)
+const AuthenticatedAdminVaultRoute = AuthenticatedAdminVaultRouteImport.update({
+  id: '/admin/vault',
+  path: '/admin/vault',
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
 const AuthenticatedAdminIdentityUsersRoute =
   AuthenticatedAdminIdentityUsersRouteImport.update({
     id: '/admin/identity/users',
@@ -341,6 +348,12 @@ const AuthenticatedAdminComplianceIncorporationCoiRoute =
     path: '/admin/compliance/incorporation/coi',
     getParentRoute: () => AuthenticatedRouteRoute,
   } as any)
+const AuthenticatedAdminComplianceIncorporationBoardMeetingRoute =
+  AuthenticatedAdminComplianceIncorporationBoardMeetingRouteImport.update({
+    id: '/admin/compliance/incorporation/board-meeting',
+    path: '/admin/compliance/incorporation/board-meeting',
+    getParentRoute: () => AuthenticatedRouteRoute,
+  } as any)
 const AuthenticatedAdminComplianceIncorporationBankRoute =
   AuthenticatedAdminComplianceIncorporationBankRouteImport.update({
     id: '/admin/compliance/incorporation/bank',
@@ -381,6 +394,7 @@ export interface FileRoutesByFullPath {
   '/500': typeof errors500Route
   '/503': typeof errors503Route
   '/dashboard': typeof AuthenticatedDashboardRoute
+  '/admin/vault': typeof AuthenticatedAdminVaultRoute
   '/errors/$error': typeof AuthenticatedErrorsErrorRoute
   '/settings/account': typeof AuthenticatedSettingsAccountRoute
   '/settings/appearance': typeof AuthenticatedSettingsAppearanceRoute
@@ -396,6 +410,7 @@ export interface FileRoutesByFullPath {
   '/admin/compliance/buyback/master-data': typeof AuthenticatedAdminComplianceBuybackMasterDataRoute
   '/admin/compliance/incorporation/auditor': typeof AuthenticatedAdminComplianceIncorporationAuditorRoute
   '/admin/compliance/incorporation/bank': typeof AuthenticatedAdminComplianceIncorporationBankRoute
+  '/admin/compliance/incorporation/board-meeting': typeof AuthenticatedAdminComplianceIncorporationBoardMeetingRoute
   '/admin/compliance/incorporation/coi': typeof AuthenticatedAdminComplianceIncorporationCoiRoute
   '/admin/compliance/incorporation/commencement': typeof AuthenticatedAdminComplianceIncorporationCommencementRoute
   '/admin/compliance/incorporation/din': typeof AuthenticatedAdminComplianceIncorporationDinRoute
@@ -434,6 +449,7 @@ export interface FileRoutesByTo {
   '/503': typeof errors503Route
   '/dashboard': typeof AuthenticatedDashboardRoute
   '/': typeof AuthenticatedIndexRoute
+  '/admin/vault': typeof AuthenticatedAdminVaultRoute
   '/errors/$error': typeof AuthenticatedErrorsErrorRoute
   '/settings/account': typeof AuthenticatedSettingsAccountRoute
   '/settings/appearance': typeof AuthenticatedSettingsAppearanceRoute
@@ -449,6 +465,7 @@ export interface FileRoutesByTo {
   '/admin/compliance/buyback/master-data': typeof AuthenticatedAdminComplianceBuybackMasterDataRoute
   '/admin/compliance/incorporation/auditor': typeof AuthenticatedAdminComplianceIncorporationAuditorRoute
   '/admin/compliance/incorporation/bank': typeof AuthenticatedAdminComplianceIncorporationBankRoute
+  '/admin/compliance/incorporation/board-meeting': typeof AuthenticatedAdminComplianceIncorporationBoardMeetingRoute
   '/admin/compliance/incorporation/coi': typeof AuthenticatedAdminComplianceIncorporationCoiRoute
   '/admin/compliance/incorporation/commencement': typeof AuthenticatedAdminComplianceIncorporationCommencementRoute
   '/admin/compliance/incorporation/din': typeof AuthenticatedAdminComplianceIncorporationDinRoute
@@ -490,6 +507,7 @@ export interface FileRoutesById {
   '/(errors)/503': typeof errors503Route
   '/_authenticated/dashboard': typeof AuthenticatedDashboardRoute
   '/_authenticated/': typeof AuthenticatedIndexRoute
+  '/_authenticated/admin/vault': typeof AuthenticatedAdminVaultRoute
   '/_authenticated/errors/$error': typeof AuthenticatedErrorsErrorRoute
   '/_authenticated/settings/account': typeof AuthenticatedSettingsAccountRoute
   '/_authenticated/settings/appearance': typeof AuthenticatedSettingsAppearanceRoute
@@ -505,6 +523,7 @@ export interface FileRoutesById {
   '/_authenticated/admin/compliance/buyback/master-data': typeof AuthenticatedAdminComplianceBuybackMasterDataRoute
   '/_authenticated/admin/compliance/incorporation/auditor': typeof AuthenticatedAdminComplianceIncorporationAuditorRoute
   '/_authenticated/admin/compliance/incorporation/bank': typeof AuthenticatedAdminComplianceIncorporationBankRoute
+  '/_authenticated/admin/compliance/incorporation/board-meeting': typeof AuthenticatedAdminComplianceIncorporationBoardMeetingRoute
   '/_authenticated/admin/compliance/incorporation/coi': typeof AuthenticatedAdminComplianceIncorporationCoiRoute
   '/_authenticated/admin/compliance/incorporation/commencement': typeof AuthenticatedAdminComplianceIncorporationCommencementRoute
   '/_authenticated/admin/compliance/incorporation/din': typeof AuthenticatedAdminComplianceIncorporationDinRoute
@@ -546,6 +565,7 @@ export interface FileRouteTypes {
     | '/500'
     | '/503'
     | '/dashboard'
+    | '/admin/vault'
     | '/errors/$error'
     | '/settings/account'
     | '/settings/appearance'
@@ -561,6 +581,7 @@ export interface FileRouteTypes {
     | '/admin/compliance/buyback/master-data'
     | '/admin/compliance/incorporation/auditor'
     | '/admin/compliance/incorporation/bank'
+    | '/admin/compliance/incorporation/board-meeting'
     | '/admin/compliance/incorporation/coi'
     | '/admin/compliance/incorporation/commencement'
     | '/admin/compliance/incorporation/din'
@@ -599,6 +620,7 @@ export interface FileRouteTypes {
     | '/503'
     | '/dashboard'
     | '/'
+    | '/admin/vault'
     | '/errors/$error'
     | '/settings/account'
     | '/settings/appearance'
@@ -614,6 +636,7 @@ export interface FileRouteTypes {
     | '/admin/compliance/buyback/master-data'
     | '/admin/compliance/incorporation/auditor'
     | '/admin/compliance/incorporation/bank'
+    | '/admin/compliance/incorporation/board-meeting'
     | '/admin/compliance/incorporation/coi'
     | '/admin/compliance/incorporation/commencement'
     | '/admin/compliance/incorporation/din'
@@ -654,6 +677,7 @@ export interface FileRouteTypes {
     | '/(errors)/503'
     | '/_authenticated/dashboard'
     | '/_authenticated/'
+    | '/_authenticated/admin/vault'
     | '/_authenticated/errors/$error'
     | '/_authenticated/settings/account'
     | '/_authenticated/settings/appearance'
@@ -669,6 +693,7 @@ export interface FileRouteTypes {
     | '/_authenticated/admin/compliance/buyback/master-data'
     | '/_authenticated/admin/compliance/incorporation/auditor'
     | '/_authenticated/admin/compliance/incorporation/bank'
+    | '/_authenticated/admin/compliance/incorporation/board-meeting'
     | '/_authenticated/admin/compliance/incorporation/coi'
     | '/_authenticated/admin/compliance/incorporation/commencement'
     | '/_authenticated/admin/compliance/incorporation/din'
@@ -872,6 +897,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedErrorsErrorRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
+    '/_authenticated/admin/vault': {
+      id: '/_authenticated/admin/vault'
+      path: '/admin/vault'
+      fullPath: '/admin/vault'
+      preLoaderRoute: typeof AuthenticatedAdminVaultRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
     '/_authenticated/admin/identity/users': {
       id: '/_authenticated/admin/identity/users'
       path: '/admin/identity/users'
@@ -1054,6 +1086,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedAdminComplianceIncorporationCoiRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
+    '/_authenticated/admin/compliance/incorporation/board-meeting': {
+      id: '/_authenticated/admin/compliance/incorporation/board-meeting'
+      path: '/admin/compliance/incorporation/board-meeting'
+      fullPath: '/admin/compliance/incorporation/board-meeting'
+      preLoaderRoute: typeof AuthenticatedAdminComplianceIncorporationBoardMeetingRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
     '/_authenticated/admin/compliance/incorporation/bank': {
       id: '/_authenticated/admin/compliance/incorporation/bank'
       path: '/admin/compliance/incorporation/bank'
@@ -1112,6 +1151,7 @@ interface AuthenticatedRouteRouteChildren {
   AuthenticatedSettingsRouteRoute: typeof AuthenticatedSettingsRouteRouteWithChildren
   AuthenticatedDashboardRoute: typeof AuthenticatedDashboardRoute
   AuthenticatedIndexRoute: typeof AuthenticatedIndexRoute
+  AuthenticatedAdminVaultRoute: typeof AuthenticatedAdminVaultRoute
   AuthenticatedErrorsErrorRoute: typeof AuthenticatedErrorsErrorRoute
   AuthenticatedHelpCenterIndexRoute: typeof AuthenticatedHelpCenterIndexRoute
   AuthenticatedUsersIndexRoute: typeof AuthenticatedUsersIndexRoute
@@ -1122,6 +1162,7 @@ interface AuthenticatedRouteRouteChildren {
   AuthenticatedAdminComplianceBuybackMasterDataRoute: typeof AuthenticatedAdminComplianceBuybackMasterDataRoute
   AuthenticatedAdminComplianceIncorporationAuditorRoute: typeof AuthenticatedAdminComplianceIncorporationAuditorRoute
   AuthenticatedAdminComplianceIncorporationBankRoute: typeof AuthenticatedAdminComplianceIncorporationBankRoute
+  AuthenticatedAdminComplianceIncorporationBoardMeetingRoute: typeof AuthenticatedAdminComplianceIncorporationBoardMeetingRoute
   AuthenticatedAdminComplianceIncorporationCoiRoute: typeof AuthenticatedAdminComplianceIncorporationCoiRoute
   AuthenticatedAdminComplianceIncorporationCommencementRoute: typeof AuthenticatedAdminComplianceIncorporationCommencementRoute
   AuthenticatedAdminComplianceIncorporationDinRoute: typeof AuthenticatedAdminComplianceIncorporationDinRoute
@@ -1151,6 +1192,7 @@ const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
   AuthenticatedSettingsRouteRoute: AuthenticatedSettingsRouteRouteWithChildren,
   AuthenticatedDashboardRoute: AuthenticatedDashboardRoute,
   AuthenticatedIndexRoute: AuthenticatedIndexRoute,
+  AuthenticatedAdminVaultRoute: AuthenticatedAdminVaultRoute,
   AuthenticatedErrorsErrorRoute: AuthenticatedErrorsErrorRoute,
   AuthenticatedHelpCenterIndexRoute: AuthenticatedHelpCenterIndexRoute,
   AuthenticatedUsersIndexRoute: AuthenticatedUsersIndexRoute,
@@ -1165,6 +1207,8 @@ const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
     AuthenticatedAdminComplianceIncorporationAuditorRoute,
   AuthenticatedAdminComplianceIncorporationBankRoute:
     AuthenticatedAdminComplianceIncorporationBankRoute,
+  AuthenticatedAdminComplianceIncorporationBoardMeetingRoute:
+    AuthenticatedAdminComplianceIncorporationBoardMeetingRoute,
   AuthenticatedAdminComplianceIncorporationCoiRoute:
     AuthenticatedAdminComplianceIncorporationCoiRoute,
   AuthenticatedAdminComplianceIncorporationCommencementRoute:

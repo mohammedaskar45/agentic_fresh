@@ -8,7 +8,8 @@ import {
   Download,
   AlertCircle,
   Loader2,
-  CheckCircle2
+  CheckCircle2,
+  Trash2
 } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent } from '@/components/ui/card'
@@ -18,11 +19,12 @@ import { incorporationService } from '@/services/incorporation.service'
 
 interface UploadGateProps {
   stepId: number
+  subId?: string
   docTitle: string
   onVerified: () => void
 }
 
-export function UploadGate({ stepId, docTitle, onVerified }: UploadGateProps) {
+export function UploadGate({ stepId, subId, docTitle, onVerified }: UploadGateProps) {
   const [status, setStatus] = useState<'idle' | 'uploading' | 'verifying' | 'verified'>('idle')
   const [fileName, setFileName] = useState<string | null>(null)
 
@@ -32,17 +34,23 @@ export function UploadGate({ stepId, docTitle, onVerified }: UploadGateProps) {
       try {
         const record = await incorporationService.getRecord()
         const uploads = record.step_uploads || {}
-        if (uploads[stepId]) {
-          setFileName(uploads[stepId].filename)
-          setStatus(uploads[stepId].status || 'verified')
-          if (uploads[stepId].status === 'verified') onVerified()
+        const key = subId ? `${stepId}_${subId}` : `${stepId}`;
+        
+        if (uploads[key]) {
+          setFileName(uploads[key].filename)
+          setStatus(uploads[key].status || 'verified')
+          if (uploads[key].status === 'verified') onVerified()
+        } else {
+          // Reset if no upload found for this subId
+          setFileName(null)
+          setStatus('idle')
         }
       } catch (error) {
         console.error('Failed to fetch upload status:', error)
       }
     }
     fetchStatus()
-  }, [stepId])
+  }, [stepId, subId])
 
   const handleUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0]
@@ -52,21 +60,32 @@ export function UploadGate({ stepId, docTitle, onVerified }: UploadGateProps) {
     setStatus('uploading')
     
     try {
-      await incorporationService.uploadDocument(stepId, file)
+      await incorporationService.uploadDocument(stepId, file, subId)
       toast.success(`${docTitle} uploaded. AI Verification starting...`)
       
-      // Simulate AI Verification
+      // Real AI Verification Call
       setStatus('verifying')
-      setTimeout(async () => {
-        await incorporationService.verifyDocument(stepId)
+      
+      const response = await incorporationService.verifyDocument(stepId, subId)
+      
+      if (response.success) {
         setStatus('verified')
         toast.success(`${docTitle} Verified Successfully!`)
         onVerified()
-      }, 3000)
+      } else {
+        setStatus('idle')
+        setFileName(null)
+        const errorMsg = response.errors?.join(' ') || 'Verification failed.'
+        toast.error(`AI Verification Failed: ${errorMsg}`, {
+          duration: 6000,
+          icon: <AlertCircle className="text-red-500" />
+        })
+      }
       
     } catch (error) {
-      toast.error('Upload failed.')
+      toast.error('Upload or verification process failed.')
       setStatus('idle')
+      setFileName(null)
     }
   }
 
@@ -126,7 +145,21 @@ export function UploadGate({ stepId, docTitle, onVerified }: UploadGateProps) {
                     <FileText className='h-4 w-4 text-slate-400' />
                     <span className='text-xs font-medium text-slate-600'>{fileName}</span>
                 </div>
-                {status === 'verified' && <span className='text-[10px] text-green-600 font-bold uppercase'>Vaulted</span>}
+                <div className='flex items-center gap-3'>
+                    {status === 'verified' && <span className='text-[10px] text-green-600 font-bold uppercase mr-2'>Vaulted</span>}
+                    <Button 
+                      variant='ghost' 
+                      size='icon' 
+                      className='h-7 w-7 text-red-500 hover:text-red-700 hover:bg-red-50'
+                      onClick={() => {
+                        setStatus('idle')
+                        setFileName(null)
+                        toast.info('Document reset. You can now upload a new version.')
+                      }}
+                    >
+                      <Trash2 className='h-4 w-4' />
+                    </Button>
+                </div>
             </div>
         )}
 

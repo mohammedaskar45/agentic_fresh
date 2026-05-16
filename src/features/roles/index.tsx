@@ -1,5 +1,4 @@
 import { useState, useEffect } from 'react'
-import { Header } from '@/components/layout/header'
 import { Main } from '@/components/layout/main'
 import { ProfileDropdown } from '@/components/profile-dropdown'
 import { ThemeSwitch } from '@/components/theme-switch'
@@ -34,12 +33,6 @@ export function Roles() {
 
   return (
     <>
-      <Header fixed>
-        <div className='me-auto' />
-        <ThemeSwitch />
-        <ProfileDropdown />
-      </Header>
-
       <Main className='flex flex-1 flex-col gap-4 sm:gap-6'>
         <div className='flex items-center justify-between'>
           <div>
@@ -53,9 +46,9 @@ export function Roles() {
           </Button>
         </div>
 
-        <Tabs defaultValue='matrix' className='space-y-4'>
+        <Tabs defaultValue='roles' className='space-y-4'>
           <TabsList>
-            <TabsTrigger value='matrix'>Access Matrix</TabsTrigger>
+            {/* <TabsTrigger value='matrix'>Access Matrix</TabsTrigger> */}
             <TabsTrigger value='roles'>Role List</TabsTrigger>
           </TabsList>
           <TabsContent value='matrix' className='space-y-4'>

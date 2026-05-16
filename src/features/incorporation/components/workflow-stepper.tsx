@@ -6,6 +6,7 @@ interface Step {
   title: string
   description: string
   status: 'completed' | 'current' | 'upcoming'
+  documentStatus?: 'NOT STARTED' | 'DRAFT READY' | 'DOWNLOADED' | 'PENDING UPLOAD' | 'UPLOADED' | 'VERIFIED' | 'REJECTED'
 }
 
 interface WorkflowStepperProps {
@@ -61,13 +62,37 @@ export function WorkflowStepper({ steps, currentStepId, onStepClick }: WorkflowS
                 )}>
                   {step.title}
                 </h4>
-                {step.status === 'current' && (
+                {step.status === 'current' ? (
                   <span className='px-2 py-0.5 text-[10px] font-bold uppercase tracking-wider bg-primary text-primary-foreground rounded-full'>
                     In Progress
+                  </span>
+                ) : step.status === 'completed' && (
+                  <span className='px-2 py-0.5 text-[10px] font-bold uppercase tracking-wider bg-emerald-500 text-white rounded-full'>
+                    Verified
                   </span>
                 )}
               </div>
               <p className='text-xs text-muted-foreground mt-1'>{step.description}</p>
+              
+              {/* Document Lifecycle Badge (Section 11) */}
+              {step.documentStatus && step.documentStatus !== 'NOT STARTED' && (
+                <div className='mt-3 flex items-center gap-2'>
+                  <div className={cn(
+                    'px-2 py-0.5 text-[8px] font-black uppercase tracking-widest rounded-md border',
+                    step.documentStatus === 'DRAFT READY' ? 'bg-blue-50 text-blue-600 border-blue-100' :
+                    step.documentStatus === 'DOWNLOADED' ? 'bg-amber-50 text-amber-600 border-amber-100' :
+                    step.documentStatus === 'PENDING UPLOAD' ? 'bg-orange-50 text-orange-600 border-orange-100' :
+                    step.documentStatus === 'UPLOADED' ? 'bg-emerald-50 text-emerald-600 border-emerald-100' :
+                    step.documentStatus === 'VERIFIED' ? 'bg-green-500 text-white border-green-600' :
+                    step.documentStatus === 'REJECTED' ? 'bg-red-50 text-red-600 border-red-100' : 'bg-slate-50 text-slate-400'
+                  )}>
+                    {step.documentStatus}
+                  </div>
+                  {step.documentStatus === 'PENDING UPLOAD' && (
+                    <span className='text-[8px] font-bold text-orange-400 animate-pulse'>Action Required</span>
+                  )}
+                </div>
+              )}
             </div>
           </div>
         </div>

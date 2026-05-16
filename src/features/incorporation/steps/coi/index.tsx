@@ -28,6 +28,7 @@ export default function CoiStep() {
   const [masterData, setMasterData] = useState<any>(null)
   const [coiNumber, setCoiNumber] = useState('')
   const [regDate, setRegDate] = useState('')
+  const [stakeholderDins, setStakeholderDins] = useState<Record<string, string>>({})
 
   useEffect(() => {
     fetchData()
@@ -40,6 +41,15 @@ export default function CoiStep() {
     try {
       const md = await incorporationService.getMasterData()
       setMasterData(md)
+      
+      // Initialize DINs from existing data
+      if (md?.stakeholders) {
+        const dins: Record<string, string> = {}
+        md.stakeholders.forEach((s: any) => {
+          dins[s.inc_stakeholder_id] = s.existing_din || ''
+        })
+        setStakeholderDins(dins)
+      }
     } catch (error) {
       console.error('Failed to fetch data:', error)
     }
@@ -53,9 +63,14 @@ export default function CoiStep() {
 
   const handleComplete = async () => {
     try {
-      await incorporationService.saveCoi({ coi_number: coiNumber, registration_date: regDate })
+      // Save COI and Update DINs
+      await incorporationService.saveCoi({ 
+        coi_number: coiNumber, 
+        registration_date: regDate,
+        stakeholder_dins: stakeholderDins // Pass DINs to backend
+      })
       workflow.completeStep(7)
-      toast.success('Congratulations! Company officially incorporated.')
+      toast.success('Congratulations! Company officially incorporated and DINs updated.')
       navigate({ to: '/admin/compliance/incorporation' })
     } catch (error) {
       toast.error('Failed to save COI.')
@@ -128,6 +143,34 @@ export default function CoiStep() {
 
         {/* Action Panel */}
         <div className='space-y-8'>
+            {/* Newly Allotted DINs Section */}
+            <Card className='border-amber-200 bg-amber-50/30'>
+              <CardHeader className='pb-2'>
+                <CardTitle className='text-sm flex items-center gap-2'>
+                  <Hash className='h-4 w-4 text-amber-600' />
+                  Update Newly Allotted DINs
+                </CardTitle>
+              </CardHeader>
+              <CardContent className='space-y-4'>
+                {masterData.stakeholders.map((s: any) => (
+                  <div key={s.inc_stakeholder_id} className='space-y-1'>
+                    <label className='text-[10px] font-bold text-slate-500 uppercase'>{s.full_name}</label>
+                    <div className='relative'>
+                      <Hash className='absolute left-3 top-2.5 h-3.5 w-3.5 text-slate-400' />
+                      <input 
+                        type='text'
+                        placeholder='Enter Allotted DIN'
+                        className='w-full pl-10 pr-4 py-2 text-xs rounded-lg border border-slate-200 focus:ring-1 focus:ring-amber-500 outline-none'
+                        value={stakeholderDins[s.inc_stakeholder_id] || ''}
+                        onChange={(e) => setStakeholderDins({...stakeholderDins, [s.inc_stakeholder_id]: e.target.value.toUpperCase()})}
+                      />
+                    </div>
+                  </div>
+                ))}
+                <p className='text-[10px] text-amber-700 italic'>* DINs are mandatory for all directors post-incorporation.</p>
+              </CardContent>
+            </Card>
+
             <div className='space-y-4'>
                 <h3 className='text-xl font-bold'>Next Actions</h3>
                 <div className='space-y-4'>

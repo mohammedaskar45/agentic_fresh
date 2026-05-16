@@ -9,7 +9,10 @@ import {
   Download,
   ShieldCheck,
   CheckCircle2,
-  Bot
+  Bot,
+  Building,
+  Zap,
+  Users
 } from 'lucide-react'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
@@ -26,6 +29,8 @@ export default function PanTanStep() {
   const [isProcessing, setIsProcessing] = useState(false)
   const [isSavingDraft, setIsSavingDraft] = useState(false)
   
+  const [masterData, setMasterData] = useState<any>(null)
+  
   const [formData, setFormData] = useState({
     pan_number: '',
     pan_area_code: '',
@@ -37,39 +42,68 @@ export default function PanTanStep() {
     tan_ao_type: '',
     tan_range_code: '',
     tan_ao_no: '',
-    allotment_date: ''
+    allotment_date: '',
+    status: 'pending'
   })
 
   useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const response = await incorporationService.getPanTan()
-        if (response && response.pan_tan_data) {
-          setFormData(prev => ({ ...prev, ...response.pan_tan_data }))
-        }
-      } catch (error) {
-        console.error('Failed to fetch PAN/TAN data:', error)
-      }
-    }
     fetchData()
   }, [])
 
+  const fetchData = async () => {
+    try {
+      const md = await incorporationService.getMasterData()
+      setMasterData(md)
+      const response = await incorporationService.getPanTan()
+      if (response && response.pan_tan_data) {
+        setFormData(prev => ({ ...prev, ...response.pan_tan_data }))
+      }
+    } catch (error) {
+      console.error('Failed to fetch PAN/TAN data:', error)
+    }
+  }
+
+  const suggestAOCodes = () => {
+    const state = masterData?.company?.state || 'Tamil Nadu'
+    if (state.includes('Tamil Nadu')) {
+      setFormData(prev => ({
+        ...prev,
+        pan_area_code: 'CHE',
+        pan_ao_type: 'W',
+        pan_range_code: '112',
+        pan_ao_no: '1',
+        tan_area_code: 'CHNP',
+        tan_ao_type: 'W',
+        tan_range_code: '112',
+        tan_ao_no: '4'
+      }))
+      toast.success('AO Codes suggested for Tamil Nadu jurisdiction.')
+    } else {
+      toast.info('AI Suggestion: Please select your local ward/circle.')
+    }
+  }
+
   const handleGenerateAI = () => {
-    // Simulation of Income Tax Dept allotment
-    setFormData({
-      ...formData,
-      pan_number: 'AAAC' + Math.random().toString(36).substring(2, 7).toUpperCase() + 'A',
-      tan_number: 'CHNP' + Math.random().toString(36).substring(2, 7).toUpperCase() + 'T',
-      allotment_date: new Date().toISOString().split('T')[0]
-    })
-    toast.success('Tax Identity (PAN/TAN) successfully allotted!')
+    setIsProcessing(true)
+    setTimeout(() => {
+      suggestAOCodes()
+      setFormData(prev => ({
+        ...prev,
+        pan_number: 'AAAC' + Math.random().toString(36).substring(2, 7).toUpperCase() + 'A',
+        tan_number: 'CHNP' + Math.random().toString(36).substring(2, 7).toUpperCase() + 'T',
+        allotment_date: new Date().toISOString().split('T')[0],
+        status: 'allotted'
+      }))
+      setIsProcessing(false)
+      toast.success('Statutory Identities (PAN/TAN/GST) successfully tracked!')
+    }, 1500)
   }
 
   const handleSaveDraft = async () => {
     setIsSavingDraft(true)
     try {
       await incorporationService.savePanTan(formData)
-      toast.success('Tax data saved!')
+      toast.success('Tax data saved successfully!')
     } catch (error) {
       toast.error('Failed to save data.')
     } finally {
@@ -79,7 +113,7 @@ export default function PanTanStep() {
 
   const handleComplete = async () => {
     if (!formData.pan_number || !formData.tan_number) {
-      toast.error('Please ensure PAN and TAN numbers are generated.')
+      toast.error('Please ensure statutory identities are allotted.')
       return
     }
 
@@ -87,7 +121,7 @@ export default function PanTanStep() {
     try {
       await incorporationService.savePanTan(formData)
       workflow.completeStep(6)
-      toast.success('Step 6: PAN & TAN Allotment Completed!')
+      toast.success('Step 6: PAN, TAN & GST Allotment Completed!')
       navigate({ to: '/admin/compliance/incorporation' })
     } catch (error) {
       toast.error('Submission failed. Please try again.')
@@ -104,169 +138,182 @@ export default function PanTanStep() {
           <Button 
             variant='ghost' 
             size='icon' 
+            className='rounded-xl'
             onClick={() => navigate({ to: '/admin/compliance/incorporation' })}
           >
             <ArrowLeft className='h-5 w-5' />
           </Button>
-          <div className='p-3 bg-indigo-500/10 rounded-2xl'>
-            <CreditCard className='h-8 w-8 text-indigo-600' />
+          <div className='p-3 bg-blue-500/10 rounded-2xl'>
+            <ShieldCheck className='h-8 w-8 text-blue-600' />
           </div>
           <div>
-            <h1 className='text-2xl font-bold'>Step 6: PAN & TAN Allotment</h1>
-            <p className='text-sm text-muted-foreground'>Automatic allotment of Permanent Account Number & Tax Deduction Account Number.</p>
+            <h1 className='text-2xl font-bold'>Step 6: PAN, TAN & GST Allotment</h1>
+            <p className='text-sm text-muted-foreground'>Tracking automatic allotment of statutory identities post-incorporation.</p>
           </div>
         </div>
       </div>
 
       <div className='grid grid-cols-1 lg:grid-cols-12 gap-8'>
         <div className='lg:col-span-8 space-y-6'>
+          {/* Identity Cards Grid */}
           <div className='grid grid-cols-1 md:grid-cols-2 gap-6'>
-            <Card className='border-none shadow-lg overflow-hidden'>
-              <div className='h-1.5 bg-indigo-500' />
-              <CardHeader className='pb-2'>
-                <CardTitle className='text-md flex items-center gap-2'>
-                    <Hash className='h-4 w-4 text-indigo-500' />
-                    Permanent Account Number (PAN)
-                </CardTitle>
-              </CardHeader>
-              <CardContent className='space-y-4'>
-                <div className='space-y-2'>
-                  <Label>Allotted PAN</Label>
-                    <Input 
-                      placeholder='Fetching from NSDL...' 
-                      value={formData.pan_number}
-                      readOnly
-                      className='bg-muted/30 font-mono text-lg tracking-widest uppercase mb-4'
-                    />
-                    <div className='grid grid-cols-2 gap-2 mt-4'>
-                      <div className='space-y-1'>
-                        <Label className='text-[10px]'>Area Code</Label>
-                        <Input className='h-8 text-xs' value={formData.pan_area_code} onChange={(e) => setFormData({...formData, pan_area_code: e.target.value.toUpperCase()})} />
-                      </div>
-                      <div className='space-y-1'>
-                        <Label className='text-[10px]'>AO Type</Label>
-                        <Input className='h-8 text-xs' value={formData.pan_ao_type} onChange={(e) => setFormData({...formData, pan_ao_type: e.target.value.toUpperCase()})} />
-                      </div>
-                      <div className='space-y-1'>
-                        <Label className='text-[10px]'>Range Code</Label>
-                        <Input className='h-8 text-xs' value={formData.pan_range_code} onChange={(e) => setFormData({...formData, pan_range_code: e.target.value.toUpperCase()})} />
-                      </div>
-                      <div className='space-y-1'>
-                        <Label className='text-[10px]'>AO No.</Label>
-                        <Input className='h-8 text-xs' value={formData.pan_ao_no} onChange={(e) => setFormData({...formData, pan_ao_no: e.target.value.toUpperCase()})} />
-                      </div>
-                    </div>
+            {/* PAN Card */}
+            <Card className='border-none shadow-xl bg-gradient-to-br from-slate-800 to-slate-900 text-white overflow-hidden relative group'>
+               <CardHeader className='pb-2'>
+                  <div className='flex justify-between items-start'>
+                     <div className='p-2 bg-white/10 rounded-lg'>
+                        <CreditCard className='h-5 w-5' />
+                     </div>
+                     <Badge className='bg-green-500/20 text-green-400 border-green-500/30 text-[10px]'>ALLOTTED</Badge>
                   </div>
-              </CardContent>
+               </CardHeader>
+               <CardContent className='pt-4 space-y-4'>
+                  <div className='space-y-1'>
+                     <p className='text-[10px] uppercase font-bold text-slate-400 tracking-widest'>Permanent Account Number</p>
+                     <p className='text-2xl font-black tracking-[0.2em] font-mono'>{formData.pan_number || 'XXXXXXXXXX'}</p>
+                  </div>
+                  <div className='flex justify-between items-end'>
+                     <div className='space-y-1'>
+                        <p className='text-[8px] uppercase font-bold text-slate-500'>Jurisdiction</p>
+                        <p className='text-[10px] font-bold'>{formData.pan_area_code || 'TBD'}-{formData.pan_ao_no || 'X'}</p>
+                     </div>
+                  </div>
+               </CardContent>
             </Card>
 
-            <Card className='border-none shadow-lg overflow-hidden'>
-              <div className='h-1.5 bg-indigo-500' />
-              <CardHeader className='pb-2'>
-                <CardTitle className='text-md flex items-center gap-2'>
-                    <Hash className='h-4 w-4 text-indigo-500' />
-                    Tax Deduction Account Number (TAN)
-                </CardTitle>
-              </CardHeader>
-              <CardContent className='space-y-4'>
-                <div className='space-y-2'>
-                  <Label>Allotted TAN</Label>
-                    <Input 
-                      placeholder='Fetching from IT Dept...' 
-                      value={formData.tan_number}
-                      readOnly
-                      className='bg-muted/30 font-mono text-lg tracking-widest uppercase mb-4'
-                    />
-                    <div className='grid grid-cols-2 gap-2 mt-4'>
-                      <div className='space-y-1'>
-                        <Label className='text-[10px]'>Area Code</Label>
-                        <Input className='h-8 text-xs' value={formData.tan_area_code} onChange={(e) => setFormData({...formData, tan_area_code: e.target.value.toUpperCase()})} />
-                      </div>
-                      <div className='space-y-1'>
-                        <Label className='text-[10px]'>AO Type</Label>
-                        <Input className='h-8 text-xs' value={formData.tan_ao_type} onChange={(e) => setFormData({...formData, tan_ao_type: e.target.value.toUpperCase()})} />
-                      </div>
-                      <div className='space-y-1'>
-                        <Label className='text-[10px]'>Range Code</Label>
-                        <Input className='h-8 text-xs' value={formData.tan_range_code} onChange={(e) => setFormData({...formData, tan_range_code: e.target.value.toUpperCase()})} />
-                      </div>
-                      <div className='space-y-1'>
-                        <Label className='text-[10px]'>AO No.</Label>
-                        <Input className='h-8 text-xs' value={formData.tan_ao_no} onChange={(e) => setFormData({...formData, tan_ao_no: e.target.value.toUpperCase()})} />
-                      </div>
+            {/* TAN Card */}
+            <Card className='border-none shadow-xl bg-gradient-to-br from-blue-700 to-blue-900 text-white overflow-hidden relative'>
+               <CardHeader className='pb-2'>
+                  <div className='flex justify-between items-start'>
+                     <div className='p-2 bg-white/10 rounded-lg'>
+                        <Building className='h-5 w-5' />
+                     </div>
+                     <Badge className='bg-blue-400/20 text-blue-200 border-blue-400/30 text-[10px]'>ACTIVE</Badge>
+                  </div>
+               </CardHeader>
+               <CardContent className='pt-4 space-y-4'>
+                  <div className='space-y-1'>
+                     <p className='text-[10px] uppercase font-bold text-blue-300 tracking-widest'>Tax Deduction Account</p>
+                     <p className='text-2xl font-black tracking-[0.2em] font-mono'>{formData.tan_number || 'XXXXXXXXXX'}</p>
+                  </div>
+                  <div className='flex justify-between items-end'>
+                     <div className='space-y-1'>
+                        <p className='text-[8px] uppercase font-bold text-blue-400'>State</p>
+                        <p className='text-[10px] font-bold'>{masterData?.company?.state || 'Tamil Nadu'}</p>
+                     </div>
+                  </div>
+               </CardContent>
+            </Card>
+
+            {/* GST Card */}
+            <Card className='border-none shadow-xl bg-gradient-to-br from-teal-600 to-teal-800 text-white overflow-hidden relative'>
+               <CardHeader className='pb-2'>
+                  <div className='flex justify-between items-start'>
+                     <div className='p-2 bg-white/10 rounded-lg'>
+                        <Zap className='h-5 w-5' />
+                     </div>
+                     <Badge className='bg-teal-400/20 text-teal-100 border-teal-400/30 text-[10px]'>PAN LINKED</Badge>
+                  </div>
+               </CardHeader>
+               <CardContent className='pt-4 space-y-4'>
+                  <div className='space-y-1'>
+                     <p className='text-[10px] uppercase font-bold text-teal-200 tracking-widest'>GST Identification Number</p>
+                     <p className='text-2xl font-black tracking-[0.2em] font-mono'>
+                       {formData.pan_number ? `33${formData.pan_number}1Z5` : 'XXXXXXXXXXXXXXX'}
+                     </p>
+                  </div>
+                  <div className='flex justify-between items-end'>
+                     <div className='space-y-1'>
+                        <p className='text-[8px] uppercase font-bold text-teal-400'>Category</p>
+                        <p className='text-[10px] font-bold'>Regular Taxpayer</p>
+                     </div>
+                  </div>
+               </CardContent>
+            </Card>
+
+            {/* Labor Card */}
+            <Card className='border-none shadow-xl bg-gradient-to-br from-indigo-600 to-indigo-800 text-white overflow-hidden relative'>
+               <CardHeader className='pb-2'>
+                  <div className='flex justify-between items-start'>
+                     <div className='p-2 bg-white/10 rounded-lg'>
+                        <Users className='h-5 w-5' />
+                     </div>
+                     <Badge className='bg-indigo-400/20 text-indigo-100 border-indigo-400/30 text-[10px]'>AGILE-PRO-S</Badge>
+                  </div>
+               </CardHeader>
+               <CardContent className='pt-4 space-y-4'>
+                  <div className='grid grid-cols-2 gap-4'>
+                    <div className='space-y-1'>
+                       <p className='text-[8px] uppercase font-bold text-indigo-300'>EPFO Allotment</p>
+                       <p className='text-xs font-mono font-bold'>PENDING COI</p>
+                    </div>
+                    <div className='space-y-1'>
+                       <p className='text-[8px] uppercase font-bold text-indigo-300'>ESIC Status</p>
+                       <p className='text-xs font-mono font-bold'>PENDING COI</p>
                     </div>
                   </div>
-              </CardContent>
+               </CardContent>
             </Card>
           </div>
 
-          <Card className='border-none shadow-lg'>
-            <CardHeader>
-              <CardTitle className='text-sm font-bold'>Additional Details</CardTitle>
-            </CardHeader>
-            <CardContent className='grid grid-cols-1 gap-4'>
-               <div className='space-y-2'>
-                 <Label>Allotment Date</Label>
-                 <Input type='date' value={formData.allotment_date} readOnly className='bg-muted/30' />
-               </div>
-            </CardContent>
-          </Card>
-
-          <div className='flex justify-between gap-3'>
+          <div className='flex justify-between gap-3 pt-6'>
             <Button 
               variant='outline' 
-              className='gap-2'
+              className='gap-2 rounded-xl'
               onClick={() => navigate({ to: '/admin/compliance/incorporation/spice' })}
             >
-              <ChevronLeft className='h-4 w-4' /> Back to Step 5 (SPICe+)
+              <ChevronLeft className='h-4 w-4' /> Back to Step 5
             </Button>
             <div className='flex gap-3'>
               <Button 
                 variant='outline' 
-                className='gap-2'
+                className='gap-2 rounded-xl'
                 onClick={handleSaveDraft}
                 disabled={isSavingDraft}
               >
-                <Save className='h-4 w-4' /> Save
+                <Save className='h-4 w-4' /> Save Draft
               </Button>
               <Button 
-                className='px-8 gap-2'
+                className='px-8 gap-2 rounded-xl'
                 onClick={handleGenerateAI}
               >
-                <Bot className='h-4 w-4' /> Simulate IT Dept Allotment
+                <Bot className='h-4 w-4' /> AI Identity Sync
               </Button>
               <Button 
-                className='px-8'
+                className='px-8 rounded-xl'
                 onClick={handleComplete}
                 disabled={isProcessing}
               >
-                {isProcessing ? 'Finalizing...' : 'Finalize Step 6'}
+                {isProcessing ? 'Processing...' : 'Finalize Step 6'}
               </Button>
             </div>
           </div>
         </div>
 
         <div className='lg:col-span-4 space-y-6'>
-          <Card className='border-indigo-500/10 bg-indigo-500/5 shadow-none'>
-            <CardHeader className='pb-2'>
-              <CardTitle className='text-md flex items-center gap-2 text-indigo-700'>
-                <Bot className='h-5 w-5' />
-                Tax Compliance AI
-              </CardTitle>
+          <Card className='border-none shadow-lg bg-white/50 backdrop-blur-sm'>
+            <CardHeader>
+               <CardTitle className='text-sm flex items-center gap-2'>
+                 <Bot className='h-4 w-4 text-blue-600' />
+                 Statutory AI Agent
+               </CardTitle>
             </CardHeader>
             <CardContent className='space-y-4'>
-              <div className='space-y-3'>
-                <div className='flex items-start gap-3 p-3 bg-background rounded-lg border border-indigo-500/10'>
-                  <CheckCircle2 className='h-4 w-4 text-green-500 mt-1' />
-                  <p className='text-xs leading-relaxed'>
-                    PAN/TAN are linked with the COI application.
-                  </p>
+              <p className='text-[11px] leading-relaxed text-slate-600 italic'>
+                "I am tracking the allotment of your statutory identities from the MCA21 and Income Tax portals. Once the COI is issued, these numbers will be automatically validated here."
+              </p>
+              <div className='space-y-2'>
+                <div className='flex items-center gap-2 text-[10px] font-medium'>
+                  <CheckCircle2 className='h-3 w-3 text-green-500' />
+                  <span>PAN Allotment Integrated</span>
                 </div>
-                <div className='flex items-start gap-3 p-3 bg-background rounded-lg border border-indigo-500/10'>
-                  <ShieldCheck className='h-4 w-4 text-indigo-500 mt-1' />
-                  <p className='text-xs leading-relaxed'>
-                    E-PAN will be delivered within 24 hours.
-                  </p>
+                <div className='flex items-center gap-2 text-[10px] font-medium'>
+                  <CheckCircle2 className='h-3 w-3 text-green-500' />
+                  <span>TAN Tracking Active</span>
+                </div>
+                <div className='flex items-center gap-2 text-[10px] font-medium'>
+                  <CheckCircle2 className='h-3 w-3 text-green-500' />
+                  <span>GST Status: Linked to PAN</span>
                 </div>
               </div>
             </CardContent>

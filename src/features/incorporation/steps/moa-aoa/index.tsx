@@ -13,10 +13,14 @@ import {
   ShieldCheck,
   FileBadge,
   RotateCcw,
-  Loader2
+  Loader2,
+  Calendar,
+  RefreshCcw,
+  HelpCircle
 } from 'lucide-react'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
+import { Input } from '@/components/ui/input'
 import { Badge } from '@/components/ui/badge'
 import { 
     Dialog, 
@@ -86,35 +90,34 @@ export default function DraftingHub() {
 
   const handleDownload = () => {
     if (!selectedDoc) return
-    pdfService.generateStatutoryPDF(selectedDoc.title, selectedDoc.content, 'AGENTIC COMPLIANCE SOLUTIONS') // Fallback name
+    pdfService.generateStatutoryPDF(selectedDoc.title, selectedDoc.content, 'the Company')
   }
 
-  const categories = ['Constitutional', 'Pre-Incorporation', 'Board Meeting', 'Auditor', 'Commencement', 'Other Statutory']
+  const categories = ['Constitutional', 'Pre-Incorporation', 'Other Statutory']
 
   return (
     <div className='p-6 space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-500'>
+      {/* Header with Stats and Actions */}
       <div className='flex items-center justify-between'>
-        <div className='flex items-center gap-3'>
-          <Button variant='ghost' size='icon' onClick={() => navigate({ to: '/admin/compliance/incorporation' })}>
-            <ArrowLeft className='h-5 w-5' />
-          </Button>
-          <div className='p-3 bg-purple-500/10 rounded-2xl'>
-            <Sparkles className='h-8 w-8 text-purple-600' />
-          </div>
-          <div>
-            <h1 className='text-2xl font-bold'>Step 4: Statutory Drafting Hub</h1>
-            <p className='text-sm text-muted-foreground'>AI-powered generation of all 18 mandatory statutory documents.</p>
-          </div>
+        <div className='flex items-center gap-4'>
+            <div className='p-3 bg-white rounded-2xl shadow-sm border border-slate-100'>
+                <FileText className='h-6 w-6 text-purple-600' />
+            </div>
+            <div>
+                <h1 className='text-2xl font-bold text-slate-800 tracking-tight'>Step 4: Statutory Drafting Hub</h1>
+                <p className='text-slate-500 text-sm'>AI-powered generation of foundational constitutional documents.</p>
+            </div>
         </div>
-        <Button 
-            onClick={handleGenerate} 
-            disabled={isGenerating}
-            variant='outline'
-            className='gap-2 border-purple-200 text-purple-700 hover:bg-purple-50'
-        >
-          {isGenerating ? <Loader2 className='h-4 w-4 animate-spin' /> : <RotateCcw className='h-4 w-4' />}
-          Regenerate All Drafts
-        </Button>
+        <div className='flex items-center gap-3'>
+            <Button 
+                onClick={handleGenerate} 
+                disabled={isGenerating}
+                className='gap-2 bg-purple-600 hover:bg-purple-700 shadow-lg shadow-purple-600/20 rounded-xl px-6'
+            >
+                {isGenerating ? <Loader2 className='h-4 w-4 animate-spin' /> : <RefreshCcw className='h-4 w-4' />}
+                Regenerate All Drafts
+            </Button>
+        </div>
       </div>
 
       <div className='grid grid-cols-1 lg:grid-cols-12 gap-8'>
@@ -188,26 +191,87 @@ export default function DraftingHub() {
 
       {/* Preview Dialog */}
       <Dialog open={isPreviewOpen} onOpenChange={setIsPreviewOpen}>
-        <DialogContent className='max-w-3xl max-h-[80vh] overflow-y-auto'>
-          <DialogHeader>
-            <DialogTitle className='flex items-center gap-2'>
-                <FileText className='h-5 w-5 text-purple-600' />
-                {selectedDoc?.title}
-            </DialogTitle>
-            <DialogDescription>
-                Statutory Draft Preview - System Generated
-            </DialogDescription>
+        <DialogContent className='sm:max-w-[1400px] w-[95vw] max-h-[94vh] overflow-hidden flex flex-col p-0 bg-slate-50 border-none shadow-2xl rounded-3xl'>
+          <DialogHeader className='p-8 bg-white border-b shrink-0'>
+            <div className='flex items-center justify-between'>
+                <div className='flex items-center gap-4'>
+                    <div className='p-3 bg-purple-600 rounded-2xl shadow-xl shadow-purple-600/20'>
+                        <FileText className='h-6 w-6 text-white' />
+                    </div>
+                    <div>
+                        <DialogTitle className='text-2xl font-bold'>{selectedDoc?.title}</DialogTitle>
+                        <DialogDescription className='text-base'>Statutory Draft Preview - System Generated & AI Validated</DialogDescription>
+                    </div>
+                </div>
+                <div className='flex items-center gap-3'>
+                    <Button variant='outline' size='lg' onClick={() => setIsPreviewOpen(false)} className='rounded-xl'>Close</Button>
+                    <Button size='lg' className='gap-2 bg-purple-600 hover:bg-purple-700 shadow-xl shadow-purple-600/20 rounded-xl px-8' onClick={handleDownload}>
+                        <Download className='h-5 w-5' /> Download Official PDF
+                    </Button>
+                </div>
+            </div>
           </DialogHeader>
-          <div className='mt-4 p-12 bg-[#fdfdfb] border shadow-inner min-h-[600px] font-serif text-sm leading-relaxed whitespace-pre-wrap relative overflow-hidden'>
-            {/* Paper Texture Overlay */}
-            <div className='absolute inset-0 opacity-[0.03] pointer-events-none bg-[url("https://www.transparenttextures.com/patterns/paper-fibers.png")]' />
-            {selectedDoc?.content}
-          </div>
-          <div className='flex justify-end gap-3 mt-6'>
-            <Button variant='outline' onClick={() => setIsPreviewOpen(false)}>Close</Button>
-            <Button className='gap-2 bg-purple-600 hover:bg-purple-700' onClick={handleDownload}>
-                <Download className='h-4 w-4' /> Download Official PDF
-            </Button>
+
+          <div className='flex-1 overflow-y-auto p-12 bg-slate-100/30 flex justify-center items-start'>
+            {/* The "Legal Paper" Container - Expanded width */}
+            <div className='w-full max-w-[950px] bg-white shadow-[0_0_80px_rgba(0,0,0,0.08)] border border-slate-200 min-h-[1200px] relative p-24 font-serif text-[17px] leading-[1.8] text-slate-800 text-justify overflow-hidden'>
+                
+                {/* Stamp Paper Header Effect */}
+                <div className='absolute top-0 left-0 right-0 h-40 bg-gradient-to-b from-amber-50/50 to-white border-b-8 border-double border-amber-100/30 flex items-center justify-center pointer-events-none'>
+                    <div className='border-2 border-amber-200/20 p-3 rounded-full'>
+                        <div className='w-20 h-20 border-4 border-amber-300/10 rounded-full flex items-center justify-center font-bold text-amber-600/10 text-[10px] uppercase tracking-[0.3em] text-center'>
+                            Government <br/> Of India
+                        </div>
+                    </div>
+                </div>
+
+                {/* Legal Margins (The Blue/Red Lines) */}
+                <div className='absolute top-0 bottom-0 left-12 w-[1px] bg-blue-300/30' />
+                <div className='absolute top-0 bottom-0 left-14 w-[1px] bg-blue-300/30' />
+                <div className='absolute top-0 bottom-0 left-16 w-[1px] bg-red-400/20' />
+
+                {/* Watermark */}
+                <div className='absolute inset-0 flex items-center justify-center pointer-events-none select-none overflow-hidden'>
+                    <span className='text-[100px] font-black text-slate-100/50 -rotate-45 uppercase tracking-widest whitespace-nowrap'>
+                        AGENTIC COMPLIANCE
+                    </span>
+                </div>
+
+                {/* Paper Texture Overlay */}
+                <div className='absolute inset-0 opacity-[0.04] pointer-events-none bg-[url("https://www.transparenttextures.com/patterns/paper-fibers.png")]' />
+
+                {/* Content Area */}
+                <div className='relative z-10 space-y-6'>
+                    {/* Placeholder for Dynamic Content */}
+                    <div className='whitespace-pre-wrap leading-relaxed'>
+                        {selectedDoc?.content}
+                    </div>
+
+                    {/* Realistic Signature Area */}
+                    <div className='mt-20 pt-8 border-t border-slate-100 flex justify-between items-start'>
+                        <div className='space-y-1'>
+                            <p className='text-xs font-bold uppercase text-slate-400 tracking-wider'>Place:</p>
+                            <p className='text-sm'>Chennai, India</p>
+                            <p className='text-xs font-bold uppercase text-slate-400 tracking-wider pt-4'>Date:</p>
+                            <p className='text-sm'>{new Date().toLocaleDateString()}</p>
+                        </div>
+                        <div className='text-right space-y-4'>
+                            <div className='w-48 h-12 border-b border-dashed border-slate-300 flex items-end justify-center pb-1'>
+                                <span className='font-signature text-purple-300 text-lg opacity-40 select-none'>Digital Signature Applied</span>
+                            </div>
+                            <div className='space-y-0.5'>
+                                <p className='text-sm font-bold uppercase'>[Authorized Signatory]</p>
+                                <p className='text-[10px] text-slate-500 uppercase tracking-tighter italic'>Electronically Generated via Agentic AI Hub</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                {/* Footer Page Number Placeholder */}
+                <div className='absolute bottom-8 left-0 right-0 flex justify-center text-[10px] text-slate-300 uppercase font-bold tracking-widest'>
+                    Page 1 of 1
+                </div>
+            </div>
           </div>
         </DialogContent>
       </Dialog>

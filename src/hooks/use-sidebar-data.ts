@@ -33,11 +33,13 @@ export function useSidebarData() {
     // Backend tree structure has 'children'
     // Frontend NavGroup expects 'items' with 'title', 'url', 'icon', etc.
     
-    // We'll group them into one 'Main Menu' group or follow the hierarchy
+    // Filter out "Access Matrix" from top-level menus
+    const filteredMenus = menus.filter(menu => menu.menu_name !== 'Access Matrix');
+
     return [
       {
         title: 'Compliance Platform',
-        items: menus.map(menu => transformMenuItem(menu))
+        items: filteredMenus.map(menu => transformMenuItem(menu))
       }
     ];
   };
@@ -46,12 +48,14 @@ export function useSidebarData() {
     // Map string icon name to Lucide component
     const IconComponent = (LucideIcons as any)[menu.icon] || LucideIcons.HelpCircle;
 
+    const filteredChildren = (menu.children || []).filter((child: any) => child.menu_name !== 'Access Matrix');
+
     return {
       title: menu.menu_name,
       url: menu.url,
       icon: IconComponent,
-      items: menu.children && menu.children.length > 0 
-        ? menu.children.map((child: any) => transformMenuItem(child))
+      items: filteredChildren.length > 0 
+        ? filteredChildren.map((child: any) => transformMenuItem(child))
         : undefined
     };
   };

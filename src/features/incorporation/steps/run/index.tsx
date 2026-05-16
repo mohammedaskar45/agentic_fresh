@@ -41,8 +41,20 @@ export default function RUNStep() {
     const fetchData = async () => {
       try {
         const response = await incorporationService.getRun()
-        if (response && response.run_data) {
+        if (response && response.run_data && response.run_data.proposed_name) {
           setFormData(response.run_data)
+        } else {
+          // Auto-patch from Master Data (Step 0)
+          const master = await incorporationService.getMasterData()
+          if (master && master.company) {
+            setFormData(prev => ({
+              ...prev,
+              proposed_name: master.company.proposed_name?.toUpperCase() || '',
+              proposed_name_2: master.company.alternative_name?.toUpperCase() || '',
+              significance: master.company.main_objects || ''
+            }))
+            toast.info('Names and Significance auto-patched from Master Data')
+          }
         }
       } catch (error) {
         console.error('Failed to fetch RUN data:', error)

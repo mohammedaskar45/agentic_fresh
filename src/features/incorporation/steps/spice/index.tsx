@@ -14,13 +14,15 @@ import {
   Copy,
   LayoutGrid,
   ClipboardCheck,
-  Zap
+  Zap,
+  Download
 } from 'lucide-react'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { toast } from 'sonner'
 import { useWorkflowStore } from '@/stores/workflow-store'
 import { incorporationService } from '@/services/incorporation.service'
+import { pdfService } from '@/lib/pdf-service'
 import { Badge } from '@/components/ui/badge'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert'
@@ -37,6 +39,7 @@ export default function SpiceAssistant() {
     declaration_accepted: false,
     inc9_declaration_accepted: false
   })
+  const [drafts, setDrafts] = useState<any[]>([])
 
   useEffect(() => {
     fetchData()
@@ -48,8 +51,20 @@ export default function SpiceAssistant() {
       setMasterData(md)
       const spice = await incorporationService.getSpice()
       if (spice && spice.spice_data) setFormData(spice.spice_data)
+      
+      const d = await incorporationService.generateDrafts()
+      setDrafts(d)
     } catch (error) {
       console.error('Failed to fetch data:', error)
+    }
+  }
+
+  const handleDownload = (docId: string) => {
+    const doc = drafts.find(d => d.id === docId)
+    if (doc) {
+      pdfService.generateStatutoryPDF(doc.title, doc.content, masterData?.company?.proposed_name || 'Company')
+    } else {
+      toast.error('Draft not found. Please check Step 4.')
     }
   }
 
@@ -96,6 +111,17 @@ export default function SpiceAssistant() {
     )
   }
 
+  const getCompanyTypeLabel = (type: string) => {
+    const types: any = {
+      'pvt_ltd': 'Private Limited Company',
+      'pub_ltd': 'Public Limited Company',
+      'opc': 'One Person Company',
+      'section8': 'Section 8 Company',
+      'llp': 'Limited Liability Partnership'
+    }
+    return types[type] || type
+  }
+
   const { company, stakeholders } = normalizedData
 
   return (
@@ -105,8 +131,8 @@ export default function SpiceAssistant() {
           <Button variant='ghost' size='icon' onClick={() => navigate({ to: '/admin/compliance/incorporation' })}>
             <ArrowLeft className='h-5 w-5' />
           </Button>
-          <div className='p-3 bg-blue-600/10 rounded-2xl'>
-            <Globe className='h-8 w-8 text-blue-600' />
+          <div className='p-3 bg-primary/10 rounded-2xl'>
+            <Globe className='h-8 w-8 text-primary' />
           </div>
           <div>
             <h1 className='text-2xl font-bold'>Step 5: SPICe+ Smart Assistant</h1>
@@ -127,24 +153,27 @@ export default function SpiceAssistant() {
 
             <div className='mt-6'>
               <TabsContent value='part-a'>
-                <Card>
-                  <CardHeader>
-                    <CardTitle className='text-sm'>Part A: Name Reservation</CardTitle>
+                <Card className='border-none shadow-sm bg-white rounded-3xl overflow-hidden'>
+                  <CardHeader className='bg-slate-50/50 border-b pb-4'>
+                    <CardTitle className='text-sm font-bold flex items-center gap-2'>
+                        <LayoutGrid className='h-4 w-4 text-blue-600' />
+                        Part A: Name Reservation
+                    </CardTitle>
                   </CardHeader>
-                  <CardContent className='space-y-4'>
+                  <CardContent className='p-6'>
                     <div className='grid grid-cols-1 md:grid-cols-2 gap-4'>
                       {[
                         { label: 'Proposed Name', value: company.proposed_name },
-                        { label: 'Type of Company', value: company.type },
+                        { label: 'Type of Company', value: getCompanyTypeLabel(company.company_type) }, // Added mapping
                         { label: 'Class of Company', value: 'Private' },
                         { label: 'Category', value: 'Company limited by shares' }
                       ].map((field, idx) => (
-                        <div key={idx} className='p-4 bg-slate-50 border rounded-xl flex items-center justify-between group'>
+                        <div key={idx} className='p-4 bg-slate-50 border border-slate-100 rounded-2xl flex items-center justify-between group transition-all hover:bg-white hover:shadow-md hover:border-blue-100'>
                           <div>
-                            <p className='text-[10px] uppercase font-bold text-slate-400'>{field.label}</p>
-                            <p className='text-sm font-medium mt-0.5'>{field.value}</p>
+                            <p className='text-[10px] uppercase font-black text-slate-400 tracking-wider'>{field.label}</p>
+                            <p className='text-sm font-semibold mt-1 text-slate-700'>{field.value || 'N/A'}</p>
                           </div>
-                          <Button variant='ghost' size='icon' onClick={() => copyToClipboard(field.value, field.label)}>
+                          <Button variant='ghost' size='icon' className='rounded-xl' onClick={() => copyToClipboard(field.value, field.label)}>
                             <Copy className='h-4 w-4 text-slate-400 group-hover:text-blue-600' />
                           </Button>
                         </div>
@@ -155,29 +184,36 @@ export default function SpiceAssistant() {
               </TabsContent>
 
               <TabsContent value='part-b'>
-                <Card>
-                  <CardHeader><CardTitle className='text-sm'>Part B: Company & Director Details</CardTitle></CardHeader>
-                  <CardContent className='space-y-4'>
+                <Card className='border-none shadow-sm bg-white rounded-3xl overflow-hidden'>
+                  <CardHeader className='bg-slate-50/50 border-b pb-4'>
+                    <CardTitle className='text-sm font-bold flex items-center gap-2'>
+                        <Bot className='h-4 w-4 text-blue-600' />
+                        Part B: Company & Director Details
+                    </CardTitle>
+                  </CardHeader>
+                  <CardContent className='p-6'>
                     <div className='space-y-4'>
-                      <div className='p-4 bg-slate-50 border rounded-xl'>
-                        <p className='text-[10px] uppercase font-bold text-slate-400'>Main Objects (Clause III(a))</p>
-                        <p className='text-xs mt-1 leading-relaxed'>{company.main_objects}</p>
-                        <Button variant='link' size='sm' className='p-0 h-auto mt-2 text-blue-600 gap-1' onClick={() => copyToClipboard(company.main_objects, 'Main Objects')}>
-                          <Copy className='h-3 w-3' /> Copy Clause
+                      <div className='p-5 bg-blue-50/50 border border-blue-100 rounded-2xl'>
+                        <p className='text-[10px] uppercase font-black text-blue-400 tracking-wider'>Main Objects (Clause III(a))</p>
+                        <p className='text-xs mt-2 leading-relaxed font-medium text-slate-700'>{company.main_objects}</p>
+                        <Button variant='link' size='sm' className='p-0 h-auto mt-3 text-blue-600 gap-1.5 font-bold hover:no-underline' onClick={() => copyToClipboard(company.main_objects, 'Main Objects')}>
+                          <Copy className='h-3.5 w-3.5' /> Copy Clause
                         </Button>
                       </div>
                       <div className='grid grid-cols-1 md:grid-cols-2 gap-4'>
                         {[
-                          { label: 'Authorised Capital', value: `Rs. ${company.authorised_capital}` },
+                          { label: 'Authorised Capital', value: `Rs. ${Number(company.authorised_capital).toLocaleString('en-IN')}` },
+                          { label: 'Paid-up Capital', value: `Rs. ${Number(company.paid_up_capital).toLocaleString('en-IN')}` },
                           { label: 'Number of Directors', value: stakeholders.length.toString() },
+                          { label: 'Registered State', value: company.state }
                         ].map((field, idx) => (
-                          <div key={idx} className='p-4 bg-slate-50 border rounded-xl flex items-center justify-between'>
+                          <div key={idx} className='p-4 bg-slate-50 border border-slate-100 rounded-2xl flex items-center justify-between transition-all hover:bg-white hover:shadow-md hover:border-blue-100'>
                              <div>
-                                <p className='text-[10px] uppercase font-bold text-slate-400'>{field.label}</p>
-                                <p className='text-sm font-medium'>{field.value}</p>
+                                <p className='text-[10px] uppercase font-black text-slate-400 tracking-wider'>{field.label}</p>
+                                <p className='text-sm font-semibold mt-1 text-slate-700'>{field.value}</p>
                              </div>
-                             <Button variant='ghost' size='icon' onClick={() => copyToClipboard(field.value, field.label)}>
-                                <Copy className='h-4 w-4' />
+                             <Button variant='ghost' size='icon' className='rounded-xl' onClick={() => copyToClipboard(field.value, field.label)}>
+                                <Copy className='h-4 w-4 text-slate-400' />
                              </Button>
                           </div>
                         ))}
@@ -188,23 +224,30 @@ export default function SpiceAssistant() {
               </TabsContent>
 
               <TabsContent value='agile'>
-                <Card>
-                  <CardHeader><CardTitle className='text-sm'>AGILE-PRO-S: Statutory Registrations</CardTitle></CardHeader>
-                  <CardContent className='space-y-4'>
-                    <div className='grid grid-cols-1 gap-4'>
+                <Card className='border-none shadow-sm bg-white rounded-3xl overflow-hidden'>
+                  <CardHeader className='bg-slate-50/50 border-b pb-4'>
+                    <CardTitle className='text-sm font-bold flex items-center gap-2'>
+                        <Zap className='h-4 w-4 text-blue-600' />
+                        AGILE-PRO-S: Statutory Registrations
+                    </CardTitle>
+                  </CardHeader>
+                  <CardContent className='p-6'>
+                    <div className='grid grid-cols-1 md:grid-cols-2 gap-4'>
                       {[
                         { label: 'GSTIN Application', value: 'Yes' },
                         { label: 'EPFO/ESIC Registration', value: 'Yes' },
-                        { label: 'Bank Name', value: 'ICICI Bank (Proposed)' },
-                        { label: 'Police Station', value: 'Teynampet Police Station' }
+                        { label: 'Bank Name', value: company.bank_name || 'Proposed Bank' },
+                        { label: 'Police Station Limit', value: company.police_station || 'N/A' },
+                        { label: 'HSN Code (Primary)', value: company.main_objects.toLowerCase().includes('software') ? '998311 (IT Services)' : '998313 (Consultancy)' },
+                        { label: 'Jurisdiction', value: company.jurisdiction || 'N/A' }
                       ].map((field, idx) => (
-                        <div key={idx} className='p-4 bg-slate-50 border rounded-xl flex items-center justify-between'>
+                        <div key={idx} className='p-4 bg-slate-50 border border-slate-100 rounded-2xl flex items-center justify-between transition-all hover:bg-white hover:shadow-md hover:border-blue-100'>
                              <div>
-                                <p className='text-[10px] uppercase font-bold text-slate-400'>{field.label}</p>
-                                <p className='text-sm font-medium'>{field.value}</p>
+                                <p className='text-[10px] uppercase font-black text-slate-400 tracking-wider'>{field.label}</p>
+                                <p className='text-sm font-semibold mt-1 text-slate-700'>{field.value}</p>
                              </div>
-                             <Button variant='ghost' size='icon' onClick={() => copyToClipboard(field.value, field.label)}>
-                                <Copy className='h-4 w-4' />
+                             <Button variant='ghost' size='icon' className='rounded-xl' onClick={() => copyToClipboard(field.value, field.label)}>
+                                <Copy className='h-4 w-4 text-slate-400' />
                              </Button>
                         </div>
                       ))}
@@ -214,15 +257,33 @@ export default function SpiceAssistant() {
               </TabsContent>
 
               <TabsContent value='linked'>
-                 <Card className='bg-green-50 border-green-200'>
-                    <CardContent className='p-8 text-center space-y-4'>
-                        <div className='p-3 bg-green-500 text-white rounded-full w-fit mx-auto'>
-                            <ClipboardCheck className='h-8 w-8' />
+                 <Card className='border-none shadow-sm bg-green-50/50 border-green-200 rounded-3xl overflow-hidden'>
+                    <CardContent className='p-10 text-center space-y-6'>
+                        <div className='p-4 bg-green-500 text-white rounded-3xl w-fit mx-auto shadow-lg shadow-green-500/20'>
+                            <ClipboardCheck className='h-10 w-10' />
                         </div>
-                        <h3 className='text-lg font-bold text-green-900'>e-MOA & e-AOA Ready</h3>
-                        <p className='text-sm text-green-700 max-w-md mx-auto'>
-                            All objects and regulations have been mapped. You can download the INC-33 and INC-34 draft from Step 4 if needed for manual verification.
-                        </p>
+                        <div className='space-y-2'>
+                            <h3 className='text-xl font-bold text-green-900'>e-MOA & e-AOA Ready</h3>
+                            <p className='text-sm text-green-700/80 max-w-sm mx-auto leading-relaxed'>
+                                All objects and regulations have been mapped. Download your forms below for portal filing.
+                            </p>
+                        </div>
+                        <div className='flex flex-wrap items-center justify-center gap-4 mt-6'>
+                           <Button 
+                              variant='outline' 
+                              className='bg-white border-green-200 hover:bg-green-100 text-green-700 gap-2 h-12 px-6 rounded-2xl shadow-sm'
+                              onClick={() => handleDownload('moa')}
+                           >
+                              <Download className='h-4 w-4' /> Download e-MOA (INC-33)
+                           </Button>
+                           <Button 
+                              variant='outline' 
+                              className='bg-white border-green-200 hover:bg-green-100 text-green-700 gap-2 h-12 px-6 rounded-2xl shadow-sm'
+                              onClick={() => handleDownload('aoa')}
+                           >
+                              <Download className='h-4 w-4' /> Download e-AOA (INC-34)
+                           </Button>
+                        </div>
                     </CardContent>
                  </Card>
               </TabsContent>
@@ -260,7 +321,7 @@ export default function SpiceAssistant() {
               <ChevronLeft className='h-4 w-4' /> Back
             </Button>
             <Button 
-              className='px-10 bg-blue-600 hover:bg-blue-700 text-white'
+              className='px-10 bg-primary hover:bg-primary/90 text-primary-foreground'
               onClick={handleComplete}
               disabled={isProcessing}
             >
@@ -288,6 +349,37 @@ export default function SpiceAssistant() {
                   <span>Master Data Validated</span>
                 </div>
               </div>
+            </CardContent>
+          </Card>
+
+          {/* Section 13.1 - S5 Checklist Requirement */}
+          <Card className='border-none shadow-xl bg-slate-900 text-white rounded-[2rem] overflow-hidden'>
+            <CardHeader className='pb-4 border-b border-white/10'>
+              <CardTitle className='text-sm font-bold flex items-center gap-2'>
+                <ClipboardCheck className='h-4 w-4 text-emerald-400' />
+                Mandatory Attachments Checklist
+              </CardTitle>
+            </CardHeader>
+            <CardContent className='p-6 space-y-4'>
+              {[
+                'Proof of Office Address (NOC/Rent Agreement)',
+                'Utility Bill (Not older than 2 months)',
+                'Signed DIR-2 (Consent to act as Director)',
+                'Signed INC-9 (Statutory Declaration)',
+                'Interest in other entities (if applicable)',
+                'Subscriber Sheet (e-MoA/e-AoA)'
+              ].map((item, idx) => (
+                <div key={idx} className='flex items-start gap-3 group'>
+                  <div className='h-4 w-4 rounded border border-white/20 mt-0.5 group-hover:border-emerald-400 transition-colors' />
+                  <span className='text-xs font-medium opacity-80 group-hover:opacity-100 transition-opacity'>{item}</span>
+                </div>
+              ))}
+              <Alert className='bg-emerald-500/10 border-emerald-500/20 mt-4'>
+                <CheckCircle2 className='h-4 w-4 text-emerald-400' />
+                <AlertDescription className='text-[10px] text-emerald-200'>
+                  All drafts generated in Step 4 are automatically mapped to these attachments.
+                </AlertDescription>
+              </Alert>
             </CardContent>
           </Card>
         </div>

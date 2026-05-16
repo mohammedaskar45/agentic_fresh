@@ -70,8 +70,30 @@ export default function DINStep() {
     const fetchData = async () => {
       try {
         const response = await incorporationService.getDin()
-        if (response && response.din_data && Array.isArray(response.din_data.directors)) {
+        if (response && response.din_data && Array.isArray(response.din_data.directors) && response.din_data.directors.length > 0) {
           setDirectors(response.din_data.directors)
+        } else {
+          // Auto-patch from Master Data
+          const master = await incorporationService.getMasterData()
+          if (master && master.stakeholders && master.stakeholders.length > 0) {
+            const patchedDirectors = master.stakeholders.map((s: any) => ({
+              id: s.inc_stakeholder_id || crypto.randomUUID(),
+              full_name: s.full_name || '',
+              father_name: s.father_name || '',
+              pan_number: s.pan || '',
+              email: s.email_id || '',
+              mobile: s.mobile_number || '',
+              qualification: 'graduate',
+              occupation: s.occupation || 'business',
+              pob: '',
+              duration_of_stay: '',
+              present_address: s.residential_address || '',
+              permanent_address: s.residential_address || '',
+              is_same_address: true
+            }))
+            setDirectors(patchedDirectors)
+            toast.info(`Auto-patched ${patchedDirectors.length} directors from Master Data`)
+          }
         }
       } catch (error) {
         console.error('Failed to fetch DIN data:', error)

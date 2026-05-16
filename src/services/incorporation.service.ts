@@ -122,6 +122,11 @@ export const incorporationService = {
     return response.data
   },
 
+  getStatus: async () => {
+    const response = await axiosInstance.get('/v1/incorporation/status')
+    return response.data
+  },
+
   // Master Data (Step 0) CRUD
   saveMasterData: async (data: any) => {
     const response = await axiosInstance.post('/v1/incorporation/master-data', data)
@@ -133,9 +138,10 @@ export const incorporationService = {
     return response.data
   },
 
-  uploadDocument: async (stepId: number, file: File) => {
+  uploadDocument: async (stepId: number, file: File, subId?: string) => {
     const formData = new FormData()
     formData.append('stepId', stepId.toString())
+    if (subId) formData.append('subId', subId)
     formData.append('file', file)
     const response = await axiosInstance.post('/v1/incorporation/upload', formData, {
       headers: { 'Content-Type': 'multipart/form-data' }
@@ -143,8 +149,8 @@ export const incorporationService = {
     return response.data
   },
 
-  verifyDocument: async (stepId: number) => {
-    const response = await axiosInstance.post('/v1/incorporation/verify', { stepId })
+  verifyDocument: async (stepId: number, subId?: string) => {
+    const response = await axiosInstance.post('/v1/incorporation/verify', { stepId, subId })
     return response.data
   },
 
@@ -161,5 +167,10 @@ export const incorporationService = {
   getDropdownMasters: async () => {
     const response = await axiosInstance.get('/v1/incorporation/dropdown-masters')
     return response.data
+  },
+
+  async saveMeeting(meetingData: any) {
+    const response = await axiosInstance.post('/v1/incorporation/save-meeting', meetingData);
+    return response.data;
   }
 }
