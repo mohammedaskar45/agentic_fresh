@@ -35,9 +35,18 @@ export default function BoardMeetingStep() {
   useEffect(() => {
     const fetchData = async () => {
       try {
+        console.log('Testing getRecord exists:', typeof incorporationService.getRecord)
         const md = await incorporationService.getMasterData()
         console.log('Master Data for Meeting:', md)
         setMasterData(md)
+        
+        const record = await incorporationService.getRecord()
+        console.log('Record JSON:', JSON.stringify(record))
+        if (record && record.metadata && record.metadata.first_board_meeting) {
+          const meeting = record.metadata.first_board_meeting
+          if (meeting.date) setMeetingDate(meeting.date)
+          if (meeting.time) setMeetingTime(meeting.time)
+        }
       } catch (error) {
         console.error('Failed to fetch master data:', error)
       }
@@ -170,7 +179,12 @@ export default function BoardMeetingStep() {
 
     setIsProcessing(true)
     try {
-      await incorporationService.saveMeeting({ date: meetingDate, type: 'first_board' })
+      await incorporationService.saveMeeting({ 
+        date: meetingDate, 
+        time: meetingTime,
+        venue: masterData?.company?.registered_address,
+        type: 'first_board' 
+      })
       workflow.completeStep(7)
       toast.success('Step 7: First Board Meeting Finalized!')
       navigate({ to: '/admin/compliance/incorporation' })

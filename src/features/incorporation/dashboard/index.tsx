@@ -64,14 +64,48 @@ export default function IncorporationDashboard() {
             
             // Force recalculate statuses based on currentId and logs
             const syncedSteps = Array.from({ length: 10 }, (_, i) => {
-                const stepLogs = logs.filter((l: any) => l.step_id === i)
-                const isUploaded = stepLogs.some((l: any) => l.action.includes('Document Uploaded'))
-                const isVerified = stepLogs.some((l: any) => l.action.includes('Document Verified'))
+                const stepLogs = logs.filter((l: any) => {
+                    // 1. Check metadata.stepId or metadata.step_id (backend structure)
+                    if (l.metadata && typeof l.metadata.stepId === 'number') {
+                        return l.metadata.stepId === i;
+                    }
+                    if (l.metadata && typeof l.metadata.step_id === 'number') {
+                        return l.metadata.step_id === i;
+                    }
+                    // 2. Check direct step_id property
+                    if (typeof l.step_id === 'number') {
+                        return l.step_id === i;
+                    }
+                    // 3. Fallback: Parse step number from description (e.g. "Step 4", "Step 1", "Step 11")
+                    const match = l.description?.match(/Step\s+(\d+)/i);
+                    if (match) {
+                        return parseInt(match[1], 10) === i;
+                    }
+                    return false;
+                })
+                
+                const isUploaded = stepLogs.some((l: any) => {
+                    const actionStr = (l.action || l.event_type || l.description || '').toUpperCase();
+                    return actionStr.includes('UPLOADED') || actionStr.includes('DOC_UPLOADED');
+                });
+                
+                const isVerified = stepLogs.some((l: any) => {
+                    const actionStr = (l.action || l.event_type || l.description || '').toUpperCase();
+                    return actionStr.includes('VERIFIED') || actionStr.includes('DOC_VERIFIED');
+                });
                 
                 let docStatus: any = 'NOT STARTED'
                 if (isVerified) docStatus = 'VERIFIED'
                 else if (isUploaded) docStatus = 'UPLOADED'
-                else if (i === 4) docStatus = 'DRAFT READY' // Step 4 always has drafts ready
+                else if (i === 4) {
+                    // Under Section 11.2, if Step 4 is complete, treat it as VERIFIED to pass the upload gate.
+                    // Otherwise, keep it as DRAFT READY.
+                    docStatus = currentId > 4 ? 'VERIFIED' : 'DRAFT READY';
+                } else if (i === 6) {
+                    // Under Section 11.2 COI Gate, if Step 6 is complete, treat it as VERIFIED to pass the COI gate.
+                    // Otherwise, keep it as NOT STARTED.
+                    docStatus = currentId > 6 ? 'VERIFIED' : 'NOT STARTED';
+                }
                 
                 return {
                     id: i,

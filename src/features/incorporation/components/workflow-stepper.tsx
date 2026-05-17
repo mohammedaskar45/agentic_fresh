@@ -75,7 +75,7 @@ export function WorkflowStepper({ steps, currentStepId, onStepClick }: WorkflowS
               <p className='text-xs text-muted-foreground mt-1'>{step.description}</p>
               
               {/* Document Lifecycle Badge (Section 11) */}
-              {step.documentStatus && step.documentStatus !== 'NOT STARTED' && (
+              {step.documentStatus && step.documentStatus !== 'NOT STARTED' && step.documentStatus !== 'VERIFIED' && (
                 <div className='mt-3 flex items-center gap-2'>
                   <div className={cn(
                     'px-2 py-0.5 text-[8px] font-black uppercase tracking-widest rounded-md border',
@@ -83,7 +83,6 @@ export function WorkflowStepper({ steps, currentStepId, onStepClick }: WorkflowS
                     step.documentStatus === 'DOWNLOADED' ? 'bg-amber-50 text-amber-600 border-amber-100' :
                     step.documentStatus === 'PENDING UPLOAD' ? 'bg-orange-50 text-orange-600 border-orange-100' :
                     step.documentStatus === 'UPLOADED' ? 'bg-emerald-50 text-emerald-600 border-emerald-100' :
-                    step.documentStatus === 'VERIFIED' ? 'bg-green-500 text-white border-green-600' :
                     step.documentStatus === 'REJECTED' ? 'bg-red-50 text-red-600 border-red-100' : 'bg-slate-50 text-slate-400'
                   )}>
                     {step.documentStatus}

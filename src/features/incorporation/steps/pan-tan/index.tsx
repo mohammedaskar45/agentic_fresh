@@ -29,8 +29,8 @@ export default function PanTanStep() {
   const [isProcessing, setIsProcessing] = useState(false)
   const [isSavingDraft, setIsSavingDraft] = useState(false)
   
+  const [laborData, setLaborData] = useState<any>(null)
   const [masterData, setMasterData] = useState<any>(null)
-  
   const [formData, setFormData] = useState({
     pan_number: '',
     pan_area_code: '',
@@ -58,6 +58,10 @@ export default function PanTanStep() {
       if (response && response.pan_tan_data) {
         setFormData(prev => ({ ...prev, ...response.pan_tan_data }))
       }
+      const laborRes = await incorporationService.getLabor()
+      if (laborRes && laborRes.labor_data) {
+        setLaborData(laborRes.labor_data)
+      }
     } catch (error) {
       console.error('Failed to fetch PAN/TAN data:', error)
     }
@@ -83,19 +87,73 @@ export default function PanTanStep() {
     }
   }
 
+  const getEpfoStateOfficeCodes = () => {
+    const state = (masterData?.company?.state || 'Tamil Nadu').toLowerCase()
+    if (state.includes('tamil nadu')) {
+      return { stateCode: 'TN', officeCode: 'MAS' }
+    } else if (state.includes('maharashtra')) {
+      return { stateCode: 'MH', officeCode: 'BAN' }
+    } else if (state.includes('karnataka')) {
+      return { stateCode: 'KA', officeCode: 'BAN' }
+    } else if (state.includes('delhi')) {
+      return { stateCode: 'DL', officeCode: 'CPM' }
+    } else if (state.includes('telangana')) {
+      return { stateCode: 'TS', officeCode: 'HYD' }
+    } else if (state.includes('andhra')) {
+      return { stateCode: 'AP', officeCode: 'VJG' }
+    }
+    return { stateCode: 'TN', officeCode: 'MAS' } // Default fallback
+  }
+
+  const getEsicStateCode = () => {
+    const state = (masterData?.company?.state || 'Tamil Nadu').toLowerCase()
+    if (state.includes('tamil nadu')) return '55'
+    if (state.includes('maharashtra')) return '31'
+    if (state.includes('karnataka')) return '53'
+    if (state.includes('delhi')) return '11'
+    if (state.includes('telangana')) return '51'
+    if (state.includes('andhra')) return '39'
+    return '55' // Default Tamil Nadu ESIC code
+  }
+
   const handleGenerateAI = () => {
     setIsProcessing(true)
-    setTimeout(() => {
+    setTimeout(async () => {
       suggestAOCodes()
+      
+      const mockPan = 'AAAC' + Math.random().toString(36).substring(2, 7).toUpperCase() + 'A'
+      const mockTan = 'CHNP' + Math.random().toString(36).substring(2, 7).toUpperCase() + 'T'
+      
+      // Get dynamic EPFO state/office codes from masterData
+      const { stateCode, officeCode } = getEpfoStateOfficeCodes()
+      const mockEpfo = `${stateCode}/${officeCode}/` + Math.floor(1000000 + Math.random() * 9000000)
+      
+      // Get dynamic ESIC state code from masterData
+      const esicStateCode = getEsicStateCode()
+      const mockEsic = `${esicStateCode}-` + Math.floor(100000 + Math.random() * 900000) + '-001'
+
       setFormData(prev => ({
         ...prev,
-        pan_number: 'AAAC' + Math.random().toString(36).substring(2, 7).toUpperCase() + 'A',
-        tan_number: 'CHNP' + Math.random().toString(36).substring(2, 7).toUpperCase() + 'T',
+        pan_number: mockPan,
+        tan_number: mockTan,
         allotment_date: new Date().toISOString().split('T')[0],
         status: 'allotted'
       }))
+
+      try {
+        const updatedLabor = {
+          epfo_number: mockEpfo,
+          esic_number: mockEsic,
+          establishment_id: 'EST-' + Math.random().toString(36).substring(2, 7).toUpperCase(),
+        }
+        await incorporationService.saveLabor(updatedLabor)
+        setLaborData(updatedLabor)
+      } catch (err) {
+        console.error('Failed to sync mock labor data:', err)
+      }
+
       setIsProcessing(false)
-      toast.success('Statutory Identities (PAN/TAN/GST) successfully tracked!')
+      toast.success('Statutory Identities (PAN/TAN/GST/Labor) successfully tracked!')
     }, 1500)
   }
 
@@ -245,11 +303,11 @@ export default function PanTanStep() {
                   <div className='grid grid-cols-2 gap-4'>
                     <div className='space-y-1'>
                        <p className='text-[8px] uppercase font-bold text-indigo-300'>EPFO Allotment</p>
-                       <p className='text-xs font-mono font-bold'>PENDING COI</p>
+                       <p className='text-xs font-mono font-bold'>{laborData?.epfo_number || 'PENDING COI'}</p>
                     </div>
                     <div className='space-y-1'>
                        <p className='text-[8px] uppercase font-bold text-indigo-300'>ESIC Status</p>
-                       <p className='text-xs font-mono font-bold'>PENDING COI</p>
+                       <p className='text-xs font-mono font-bold'>{laborData?.esic_number || 'PENDING COI'}</p>
                     </div>
                   </div>
                </CardContent>
