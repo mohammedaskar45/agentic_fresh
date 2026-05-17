@@ -48,8 +48,8 @@ export function Roles() {
 
         <Tabs defaultValue='roles' className='space-y-4'>
           <TabsList>
-            {/* <TabsTrigger value='matrix'>Access Matrix</TabsTrigger> */}
             <TabsTrigger value='roles'>Role List</TabsTrigger>
+            <TabsTrigger value='matrix'>Access Matrix</TabsTrigger>
           </TabsList>
           <TabsContent value='matrix' className='space-y-4'>
             <AccessMatrix />
