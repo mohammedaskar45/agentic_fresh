@@ -11,6 +11,7 @@ import { UserNav } from '@/components/layout/nav-user'
 import { ProfileDropdown } from '@/components/profile-dropdown'
 import { Search } from '@/components/search'
 import { ThemeSwitch } from '@/components/theme-switch'
+import { AIChatAssistant } from '@/components/ai-chat-assistant'
 
 type AuthenticatedLayoutProps = {
   children?: React.ReactNode
@@ -46,6 +47,7 @@ export function AuthenticatedLayout({ children }: AuthenticatedLayoutProps) {
                </div>
             </Header>
             {children ?? <Outlet />}
+            <AIChatAssistant />
           </SidebarInset>
         </SidebarProvider>
       </LayoutProvider>
