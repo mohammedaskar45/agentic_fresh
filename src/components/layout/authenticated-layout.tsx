@@ -11,6 +11,8 @@ import { UserNav } from '@/components/layout/nav-user'
 import { ProfileDropdown } from '@/components/profile-dropdown'
 import { Search } from '@/components/search'
 import { ThemeSwitch } from '@/components/theme-switch'
+import { FloatingButton } from '@/ai/components/FloatingButton'
+import { ChatModal } from '@/ai/components/ChatModal'
 
 type AuthenticatedLayoutProps = {
   children?: React.ReactNode
@@ -49,6 +51,10 @@ export function AuthenticatedLayout({ children }: AuthenticatedLayoutProps) {
           </SidebarInset>
         </SidebarProvider>
       </LayoutProvider>
+      {/* Global AI Assistant – available on all authenticated pages */}
+      <FloatingButton />
+      <ChatModal />
     </SearchProvider>
   )
 }
+

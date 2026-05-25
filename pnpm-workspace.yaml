@@ -2,4 +2,5 @@ allowBuilds:
   '0': '@clerk/shared'
   '1': esbuild
   '@clerk/shared': true
+  core-js: true
   esbuild: true
